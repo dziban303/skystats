@@ -48,7 +48,7 @@ Either set in `.env` for local development, or `docker-compose.yml` when running
 | DB_HOST                   | Postgres host - `192.168.1.xxx`                                                                                                                           |
 | DB_PORT                   | Postgres port - `5432`                                                                                                                                    |
 | ADSB_HOST                 | IP of the ADSB receiver running readsb - `192.168.1.xxx`                                                                                                  |
-| ADSB_PORT                 | Port on ADSB receiver where readsb aircraft.json being served - `8080`                                                                                    |
+| ADSB_PORT                 | Port on ADSB receiver where readsb aircraft.json being served - `8080` (Note: Not the `30047/tcp` port which streams JSON data)                           |
 | LATITUDE                  | Lattitude of your receiver - `xx.xxxxxx`                                                                                                                  |
 | LONGITUDE                 | Longitude of your receiver - `yy.yyyyyy`                                                                                                                  |
 | RADIUS                    | Distance in km from your receiver that you want to record aircraft. Set to a distance greater than that of your receiver to capture all aircraft - `1000` |
