@@ -21,7 +21,7 @@ SET default_tablespace = '';
 SET default_table_access_method = heap;
 
 --
--- Name: aircraft_data; Type: TABLE; Schema: public; Owner: admin
+-- Name: aircraft_data; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.aircraft_data (
@@ -87,10 +87,9 @@ CREATE TABLE public.aircraft_data (
 );
 
 
-ALTER TABLE public.aircraft_data OWNER TO admin;
 
 --
--- Name: aircraft_data_id_seq; Type: SEQUENCE; Schema: public; Owner: admin
+-- Name: aircraft_data_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE public.aircraft_data_id_seq
@@ -102,17 +101,16 @@ CREATE SEQUENCE public.aircraft_data_id_seq
     CACHE 1;
 
 
-ALTER SEQUENCE public.aircraft_data_id_seq OWNER TO admin;
 
 --
--- Name: aircraft_data_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: admin
+-- Name: aircraft_data_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
 ALTER SEQUENCE public.aircraft_data_id_seq OWNED BY public.aircraft_data.id;
 
 
 --
--- Name: registration_data; Type: TABLE; Schema: public; Owner: admin
+-- Name: registration_data; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.registration_data (
@@ -131,10 +129,9 @@ CREATE TABLE public.registration_data (
 );
 
 
-ALTER TABLE public.registration_data OWNER TO admin;
 
 --
--- Name: aircraft_registration_id_seq; Type: SEQUENCE; Schema: public; Owner: admin
+-- Name: aircraft_registration_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE public.aircraft_registration_id_seq
@@ -146,17 +143,16 @@ CREATE SEQUENCE public.aircraft_registration_id_seq
     CACHE 1;
 
 
-ALTER SEQUENCE public.aircraft_registration_id_seq OWNER TO admin;
 
 --
--- Name: aircraft_registration_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: admin
+-- Name: aircraft_registration_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
 ALTER SEQUENCE public.aircraft_registration_id_seq OWNED BY public.registration_data.id;
 
 
 --
--- Name: fastest_aircraft; Type: TABLE; Schema: public; Owner: admin
+-- Name: fastest_aircraft; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.fastest_aircraft (
@@ -173,10 +169,9 @@ CREATE TABLE public.fastest_aircraft (
 );
 
 
-ALTER TABLE public.fastest_aircraft OWNER TO admin;
 
 --
--- Name: fastest_aircraft_id_seq; Type: SEQUENCE; Schema: public; Owner: admin
+-- Name: fastest_aircraft_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE public.fastest_aircraft_id_seq
@@ -188,17 +183,16 @@ CREATE SEQUENCE public.fastest_aircraft_id_seq
     CACHE 1;
 
 
-ALTER SEQUENCE public.fastest_aircraft_id_seq OWNER TO admin;
 
 --
--- Name: fastest_aircraft_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: admin
+-- Name: fastest_aircraft_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
 ALTER SEQUENCE public.fastest_aircraft_id_seq OWNED BY public.fastest_aircraft.id;
 
 
 --
--- Name: route_data; Type: TABLE; Schema: public; Owner: admin
+-- Name: route_data; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.route_data (
@@ -233,10 +227,9 @@ CREATE TABLE public.route_data (
 );
 
 
-ALTER TABLE public.route_data OWNER TO admin;
 
 --
--- Name: flight_route_id_seq; Type: SEQUENCE; Schema: public; Owner: admin
+-- Name: flight_route_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE public.flight_route_id_seq
@@ -248,17 +241,16 @@ CREATE SEQUENCE public.flight_route_id_seq
     CACHE 1;
 
 
-ALTER SEQUENCE public.flight_route_id_seq OWNER TO admin;
 
 --
--- Name: flight_route_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: admin
+-- Name: flight_route_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
 ALTER SEQUENCE public.flight_route_id_seq OWNED BY public.route_data.id;
 
 
 --
--- Name: highest_aircraft; Type: TABLE; Schema: public; Owner: admin
+-- Name: highest_aircraft; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.highest_aircraft (
@@ -274,10 +266,9 @@ CREATE TABLE public.highest_aircraft (
 );
 
 
-ALTER TABLE public.highest_aircraft OWNER TO admin;
 
 --
--- Name: highest_aircraft_id_seq; Type: SEQUENCE; Schema: public; Owner: admin
+-- Name: highest_aircraft_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE public.highest_aircraft_id_seq
@@ -289,17 +280,16 @@ CREATE SEQUENCE public.highest_aircraft_id_seq
     CACHE 1;
 
 
-ALTER SEQUENCE public.highest_aircraft_id_seq OWNER TO admin;
 
 --
--- Name: highest_aircraft_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: admin
+-- Name: highest_aircraft_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
 ALTER SEQUENCE public.highest_aircraft_id_seq OWNED BY public.highest_aircraft.id;
 
 
 --
--- Name: interesting_aircraft; Type: TABLE; Schema: public; Owner: admin
+-- Name: interesting_aircraft; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.interesting_aircraft (
@@ -321,10 +311,9 @@ CREATE TABLE public.interesting_aircraft (
 );
 
 
-ALTER TABLE public.interesting_aircraft OWNER TO admin;
 
 --
--- Name: interesting_aircraft_seen; Type: TABLE; Schema: public; Owner: admin
+-- Name: interesting_aircraft_seen; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.interesting_aircraft_seen (
@@ -365,10 +354,9 @@ CREATE TABLE public.interesting_aircraft_seen (
 );
 
 
-ALTER TABLE public.interesting_aircraft_seen OWNER TO admin;
 
 --
--- Name: lowest_aircraft; Type: TABLE; Schema: public; Owner: admin
+-- Name: lowest_aircraft; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.lowest_aircraft (
@@ -384,10 +372,9 @@ CREATE TABLE public.lowest_aircraft (
 );
 
 
-ALTER TABLE public.lowest_aircraft OWNER TO admin;
 
 --
--- Name: lowest_aircraft_id_seq; Type: SEQUENCE; Schema: public; Owner: admin
+-- Name: lowest_aircraft_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE public.lowest_aircraft_id_seq
@@ -399,17 +386,16 @@ CREATE SEQUENCE public.lowest_aircraft_id_seq
     CACHE 1;
 
 
-ALTER SEQUENCE public.lowest_aircraft_id_seq OWNER TO admin;
 
 --
--- Name: lowest_aircraft_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: admin
+-- Name: lowest_aircraft_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
 ALTER SEQUENCE public.lowest_aircraft_id_seq OWNED BY public.lowest_aircraft.id;
 
 
 --
--- Name: slowest_aircraft; Type: TABLE; Schema: public; Owner: admin
+-- Name: slowest_aircraft; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.slowest_aircraft (
@@ -426,10 +412,9 @@ CREATE TABLE public.slowest_aircraft (
 );
 
 
-ALTER TABLE public.slowest_aircraft OWNER TO admin;
 
 --
--- Name: slowest_aircraft_id_seq; Type: SEQUENCE; Schema: public; Owner: admin
+-- Name: slowest_aircraft_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE public.slowest_aircraft_id_seq
@@ -441,17 +426,16 @@ CREATE SEQUENCE public.slowest_aircraft_id_seq
     CACHE 1;
 
 
-ALTER SEQUENCE public.slowest_aircraft_id_seq OWNER TO admin;
 
 --
--- Name: slowest_aircraft_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: admin
+-- Name: slowest_aircraft_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
 ALTER SEQUENCE public.slowest_aircraft_id_seq OWNED BY public.slowest_aircraft.id;
 
 
 --
--- Name: test; Type: VIEW; Schema: public; Owner: admin
+-- Name: test; Type: VIEW; Schema: public; Owner: -
 --
 
 CREATE VIEW public.test AS
@@ -466,59 +450,58 @@ CREATE VIEW public.test AS
   ORDER BY last_seen DESC;
 
 
-ALTER VIEW public.test OWNER TO admin;
 
 --
--- Name: aircraft_data id; Type: DEFAULT; Schema: public; Owner: admin
+-- Name: aircraft_data id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.aircraft_data ALTER COLUMN id SET DEFAULT nextval('public.aircraft_data_id_seq'::regclass);
 
 
 --
--- Name: fastest_aircraft id; Type: DEFAULT; Schema: public; Owner: admin
+-- Name: fastest_aircraft id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.fastest_aircraft ALTER COLUMN id SET DEFAULT nextval('public.fastest_aircraft_id_seq'::regclass);
 
 
 --
--- Name: highest_aircraft id; Type: DEFAULT; Schema: public; Owner: admin
+-- Name: highest_aircraft id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.highest_aircraft ALTER COLUMN id SET DEFAULT nextval('public.highest_aircraft_id_seq'::regclass);
 
 
 --
--- Name: lowest_aircraft id; Type: DEFAULT; Schema: public; Owner: admin
+-- Name: lowest_aircraft id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.lowest_aircraft ALTER COLUMN id SET DEFAULT nextval('public.lowest_aircraft_id_seq'::regclass);
 
 
 --
--- Name: registration_data id; Type: DEFAULT; Schema: public; Owner: admin
+-- Name: registration_data id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.registration_data ALTER COLUMN id SET DEFAULT nextval('public.aircraft_registration_id_seq'::regclass);
 
 
 --
--- Name: route_data id; Type: DEFAULT; Schema: public; Owner: admin
+-- Name: route_data id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.route_data ALTER COLUMN id SET DEFAULT nextval('public.flight_route_id_seq'::regclass);
 
 
 --
--- Name: slowest_aircraft id; Type: DEFAULT; Schema: public; Owner: admin
+-- Name: slowest_aircraft id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.slowest_aircraft ALTER COLUMN id SET DEFAULT nextval('public.slowest_aircraft_id_seq'::regclass);
 
 
 --
--- Name: fastest_aircraft fastest_aircraft_pkey; Type: CONSTRAINT; Schema: public; Owner: admin
+-- Name: fastest_aircraft fastest_aircraft_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.fastest_aircraft
@@ -526,7 +509,7 @@ ALTER TABLE ONLY public.fastest_aircraft
 
 
 --
--- Name: fastest_aircraft fastest_aircraft_unique_hex_first_seen; Type: CONSTRAINT; Schema: public; Owner: admin
+-- Name: fastest_aircraft fastest_aircraft_unique_hex_first_seen; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.fastest_aircraft
@@ -534,7 +517,7 @@ ALTER TABLE ONLY public.fastest_aircraft
 
 
 --
--- Name: highest_aircraft highest_aircraft_pkey; Type: CONSTRAINT; Schema: public; Owner: admin
+-- Name: highest_aircraft highest_aircraft_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.highest_aircraft
@@ -542,7 +525,7 @@ ALTER TABLE ONLY public.highest_aircraft
 
 
 --
--- Name: highest_aircraft highest_aircraft_unique_hex_first_seen; Type: CONSTRAINT; Schema: public; Owner: admin
+-- Name: highest_aircraft highest_aircraft_unique_hex_first_seen; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.highest_aircraft
@@ -550,7 +533,7 @@ ALTER TABLE ONLY public.highest_aircraft
 
 
 --
--- Name: lowest_aircraft lowest_aircraft_pkey; Type: CONSTRAINT; Schema: public; Owner: admin
+-- Name: lowest_aircraft lowest_aircraft_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.lowest_aircraft
@@ -558,7 +541,7 @@ ALTER TABLE ONLY public.lowest_aircraft
 
 
 --
--- Name: lowest_aircraft lowest_aircraft_unique_hex_first_seen; Type: CONSTRAINT; Schema: public; Owner: admin
+-- Name: lowest_aircraft lowest_aircraft_unique_hex_first_seen; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.lowest_aircraft
@@ -566,7 +549,7 @@ ALTER TABLE ONLY public.lowest_aircraft
 
 
 --
--- Name: registration_data mode_s_unique; Type: CONSTRAINT; Schema: public; Owner: admin
+-- Name: registration_data mode_s_unique; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.registration_data
@@ -574,7 +557,7 @@ ALTER TABLE ONLY public.registration_data
 
 
 --
--- Name: route_data route_callsign_unique; Type: CONSTRAINT; Schema: public; Owner: admin
+-- Name: route_data route_callsign_unique; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.route_data
@@ -582,7 +565,7 @@ ALTER TABLE ONLY public.route_data
 
 
 --
--- Name: slowest_aircraft slowest_aircraft_pkey; Type: CONSTRAINT; Schema: public; Owner: admin
+-- Name: slowest_aircraft slowest_aircraft_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.slowest_aircraft
@@ -590,7 +573,7 @@ ALTER TABLE ONLY public.slowest_aircraft
 
 
 --
--- Name: slowest_aircraft slowest_aircraft_unique_hex_first_seen; Type: CONSTRAINT; Schema: public; Owner: admin
+-- Name: slowest_aircraft slowest_aircraft_unique_hex_first_seen; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.slowest_aircraft
