@@ -433,24 +433,6 @@ CREATE SEQUENCE public.slowest_aircraft_id_seq
 
 ALTER SEQUENCE public.slowest_aircraft_id_seq OWNED BY public.slowest_aircraft.id;
 
-
---
--- Name: test; Type: VIEW; Schema: public; Owner: -
---
-
-CREATE VIEW public.test AS
- SELECT id,
-    r,
-    hex,
-    flight,
-    first_seen,
-    last_seen,
-    alt_baro
-   FROM public.aircraft_data
-  ORDER BY last_seen DESC;
-
-
-
 --
 -- Name: aircraft_data id; Type: DEFAULT; Schema: public; Owner: -
 --
