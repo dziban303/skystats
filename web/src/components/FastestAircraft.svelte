@@ -19,7 +19,7 @@
 </script>
 
 <AircraftStats 
-    endpoint="/api/stats/fastest"
+    endpoint="/api/stats/fastest?limit=5"
     title="Fastest Aircraft"
     {columns}
 />

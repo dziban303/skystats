@@ -19,7 +19,7 @@
 </script>
 
 <AircraftStats 
-    endpoint="/api/stats/slowest"
+    endpoint="/api/stats/slowest?limit=5"
     title="Slowest Aircraft"
     {columns}
 />

@@ -19,7 +19,7 @@
 </script>
 
 <AircraftStats 
-    endpoint="/api/stats/lowest"
+    endpoint="/api/stats/lowest?limit=5"
     title="Lowest Aircraft"
     {columns}
 />

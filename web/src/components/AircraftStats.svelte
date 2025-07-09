@@ -59,9 +59,9 @@
     <div class="card-body">
         <h2 class="card-title">{title}</h2>
         <div class="overflow-x-auto">
-            <table class="table table-zebra text-center">
+            <table class="table text-center">
                 <thead>
-                    <tr>
+                    <tr class="uppercase tracking-wider">
                         {#each columns as column}
                             <th>{column.header}</th>
                         {/each}

@@ -19,7 +19,7 @@
 </script>
 
 <AircraftStats 
-    endpoint="/api/stats/highest"
+    endpoint="/api/stats/highest?limit=5"
     title="Highest Aircraft"
     {columns}
 />
