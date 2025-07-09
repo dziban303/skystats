@@ -3,12 +3,12 @@
 
     const columns = [
         { header: 'Registration', field: 'registration', class: 'font-mono' },
-        { header: 'Type', field: 'type' },
+        { header: 'Model', field: 'type' },
         { header: 'Flight', field: 'flight' },
         { 
-            header: 'Speed', 
-            field: 'ground_speed',
-            formatter: (value) => value ? `${value.toLocaleString()} kts` : '-'
+            header: 'Altitude', 
+            field: 'barometric_altitude',
+            formatter: (value) => value ? `${value.toLocaleString()} ft` : '-'
         },
         { 
             header: 'First Seen', 
@@ -19,7 +19,7 @@
 </script>
 
 <AircraftStats 
-    endpoint="/api/stats/slowest"
-    title="Slowest Aircraft"
+    endpoint="/api/stats/lowest"
+    title="Lowest Aircraft"
     {columns}
 />
