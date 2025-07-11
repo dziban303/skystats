@@ -3,7 +3,7 @@
     import { IconRocket } from '@tabler/icons-svelte';
 
     const columns = [
-        { header: 'Registration', field: 'registration', class: 'font-mono' },
+        { header: 'Reg', field: 'registration', class: 'font-mono' },
         { header: 'Type', field: 'type' },
         // { header: 'Flight', field: 'flight' },
         { 

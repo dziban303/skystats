@@ -3,7 +3,7 @@
     import { IconArrowUpDashed } from '@tabler/icons-svelte';
 
     const columns = [
-        { header: 'Registration', field: 'registration', class: 'font-mono' },
+        { header: 'Reg', field: 'registration', class: 'font-mono' },
         { header: 'Model', field: 'type' },
         // { header: 'Flight', field: 'flight' },
         { 

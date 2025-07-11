@@ -1,6 +1,6 @@
 <script>
 // @ts-nocheck
-    import { onDestroy, onMount } from 'svelte';
+    import { onMount, onDestroy } from 'svelte';
 
     export let endpoint;
     export let title;
@@ -9,6 +9,7 @@
     export let iconColor = '';
     export let iconBgColor = '';
 
+    let refreshRate = 10000
     let data = [];
     let loading = true;
     let error = null;
@@ -33,7 +34,7 @@
 
     onMount(() => {
         fetchData();
-        interval = setInterval(fetchData, 10000);
+        interval = setInterval(fetchData, refreshRate);
     })
 
     onDestroy(() => {
@@ -70,7 +71,7 @@
                     <span>No data available</span>
                 </div>
             {:else}
-                <table class="table text-center">
+                <table class="table">
                     <thead>
                         <tr class="uppercase tracking-wider">
                             {#each columns as column}

@@ -54,8 +54,6 @@
         <span>No data available</span>
     </div>
 {:else}
-
-
     <div class="stats stats-vertical lg:stats-horizontal shadow">
         <div class="stat">
             <div class="stat-figure">
@@ -87,9 +85,6 @@
             <div class="stat-value">{data.total_aircraft.toLocaleString()}</div>
             <div class="stat-desc">all time</div>
         </div>
-        
-
-
         <!-- <div class="stat">
             <div class="stat-title">Unique Types</div>
             <div class="stat-value">{data.unique_aircraft_types.toLocaleString()}</div>
