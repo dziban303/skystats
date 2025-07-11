@@ -443,6 +443,14 @@ func (s *APIServer) handleGeneralStats(c *gin.Context) {
 		stats["today_aircraft"] = todayAircraft
 	}
 
+	// Past hour aircraft count
+	var hourAircraft int
+	err = s.pg.db.QueryRow(context.Background(),
+		"SELECT COUNT(*) FROM aircraft_data WHERE first_seen >= NOW() - INTERVAL '1 hour'").Scan(&hourAircraft)
+	if err == nil {
+		stats["hour_aircraft"] = hourAircraft
+	}
+
 	// Unique aircraft types
 	var uniqueTypes int
 	err = s.pg.db.QueryRow(context.Background(),
@@ -458,21 +466,21 @@ func (s *APIServer) handleGeneralStats(c *gin.Context) {
 		stats["interesting_aircraft_count"] = interestingCount
 	}
 
-	// Fastest recorded speed
-	var fastestSpeed float64
-	err = s.pg.db.QueryRow(context.Background(),
-		"SELECT MAX(ground_speed) FROM fastest_aircraft").Scan(&fastestSpeed)
-	if err == nil {
-		stats["fastest_speed"] = fastestSpeed
-	}
+	// // Fastest recorded speed
+	// var fastestSpeed float64
+	// err = s.pg.db.QueryRow(context.Background(),
+	// 	"SELECT MAX(ground_speed) FROM fastest_aircraft").Scan(&fastestSpeed)
+	// if err == nil {
+	// 	stats["fastest_speed"] = fastestSpeed
+	// }
 
-	// Highest altitude
-	var highestAltitude int
-	err = s.pg.db.QueryRow(context.Background(),
-		"SELECT MAX(barometric_altitude) FROM highest_aircraft").Scan(&highestAltitude)
-	if err == nil {
-		stats["highest_altitude"] = highestAltitude
-	}
+	// // Highest altitude
+	// var highestAltitude int
+	// err = s.pg.db.QueryRow(context.Background(),
+	// 	"SELECT MAX(barometric_altitude) FROM highest_aircraft").Scan(&highestAltitude)
+	// if err == nil {
+	// 	stats["highest_altitude"] = highestAltitude
+	// }
 
 	c.JSON(http.StatusOK, stats)
 }

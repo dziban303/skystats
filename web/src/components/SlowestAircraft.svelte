@@ -1,10 +1,11 @@
 <script>
     import AircraftStats from './AircraftStats.svelte';
+    import { IconWalk } from '@tabler/icons-svelte';
 
     const columns = [
         { header: 'Registration', field: 'registration', class: 'font-mono' },
         { header: 'Type', field: 'type' },
-        { header: 'Flight', field: 'flight' },
+        // { header: 'Flight', field: 'flight' },
         { 
             header: 'Speed', 
             field: 'ground_speed',
@@ -22,4 +23,7 @@
     endpoint="/api/stats/slowest?limit=5"
     title="Slowest Aircraft"
     {columns}
+    icon={IconWalk}
+    iconColor="text-yellow-600"
+    iconBgColor="bg-yellow-100"
 />

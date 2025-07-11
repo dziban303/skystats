@@ -1,10 +1,11 @@
 <script>
     import AircraftStats from './AircraftStats.svelte';
+    import { IconArrowDownDashed } from '@tabler/icons-svelte';
 
     const columns = [
         { header: 'Registration', field: 'registration', class: 'font-mono' },
         { header: 'Model', field: 'type' },
-        { header: 'Flight', field: 'flight' },
+        // { header: 'Flight', field: 'flight' },
         { 
             header: 'Altitude', 
             field: 'barometric_altitude',
@@ -22,4 +23,7 @@
     endpoint="/api/stats/lowest?limit=5"
     title="Lowest Aircraft"
     {columns}
+    icon={IconArrowDownDashed}
+    iconColor="text-blue-500"
+    iconBgColor="bg-blue-100"
 />

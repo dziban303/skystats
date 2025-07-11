@@ -1,10 +1,11 @@
 <script>
     import AircraftStats from './AircraftStats.svelte';
+    import { IconRocket } from '@tabler/icons-svelte';
 
     const columns = [
         { header: 'Registration', field: 'registration', class: 'font-mono' },
         { header: 'Type', field: 'type' },
-        { header: 'Flight', field: 'flight' },
+        // { header: 'Flight', field: 'flight' },
         { 
             header: 'Speed', 
             field: 'ground_speed',
@@ -22,4 +23,8 @@
     endpoint="/api/stats/fastest?limit=5"
     title="Fastest Aircraft"
     {columns}
+    icon={IconRocket}
+    iconColor="text-red-500"
+    iconBgColor="bg-red-100"
+
 />

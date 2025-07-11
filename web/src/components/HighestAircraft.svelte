@@ -1,10 +1,11 @@
 <script>
     import AircraftStats from './AircraftStats.svelte';
+    import { IconArrowUpDashed } from '@tabler/icons-svelte';
 
     const columns = [
         { header: 'Registration', field: 'registration', class: 'font-mono' },
         { header: 'Model', field: 'type' },
-        { header: 'Flight', field: 'flight' },
+        // { header: 'Flight', field: 'flight' },
         { 
             header: 'Altitude', 
             field: 'barometric_altitude',
@@ -22,4 +23,7 @@
     endpoint="/api/stats/highest?limit=5"
     title="Highest Aircraft"
     {columns}
+    icon={IconArrowUpDashed}
+    iconColor="text-green-500"
+    iconBgColor="bg-green-100"
 />

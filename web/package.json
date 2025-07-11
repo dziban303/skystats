@@ -19,6 +19,7 @@
     "vite": "^6.3.5"
   },
   "dependencies": {
+    "@tabler/icons-svelte": "^3.34.0",
     "theme-change": "^2.5.0"
   }
 }
