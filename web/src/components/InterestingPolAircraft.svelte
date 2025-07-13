@@ -9,4 +9,5 @@
     icon={IconShield}
     iconColor="text-blue-500"
     iconBgColor="bg-blue-100"
+    aircraftType="pol"
 />

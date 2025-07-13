@@ -6,12 +6,14 @@
     export let icon;
     export let iconColor;
     export let iconBgColor;
+    export let aircraftType;
 
     let refreshRate = 10000
     let data = [];
     let loading = true;
     let error = null;
     let interval = null;
+    let selectedAircraft = null;
 
     async function fetchData() {
         
@@ -30,6 +32,16 @@
         }
     }
 
+    function showAircraftModal(aircraft) {
+        selectedAircraft = aircraft;
+        // @ts-ignore
+        document.getElementById(aircraftType).showModal();
+    }
+
+    function closeModal() {
+        selectedAircraft = null;
+    }
+
     onMount(() => {
         fetchData();
         interval = setInterval(fetchData, refreshRate)
@@ -42,8 +54,8 @@
     });
 
 </script>
-
-<div class="card bg-base-100 w96 shadow-sm rounded-xl border border-gray-200 hover:shadow-md transition-all duration-200">
+<!-- <div class="card bg-base-100 w96 shadow-sm rounded-xl border border-secondary hover:shadow-md transition-all duration-200"> -->
+<div class="card bg-base-100 w96 shadow-sm rounded-xl hover:shadow-md transition-all duration-200">
     <div class="card-body">
         <h2 class="card-title -mt-2 -mb-2 flex items-center gap-2">
             {#if icon}
@@ -73,26 +85,24 @@
                 <table class="table">
                     <thead class="uppercase tracking-wider">
                         <tr>
-                            <th>Flight</th>
                             <th>Reg</th>
+                            <th>Flight</th>
                             <th>Operator</th>
                             <th>Type</th>
                             <th>Category</th>
-                            <th>Tags</th>
+                            <!-- <th>Tags</th> -->
                             <th>Last Seen</th>
                         </tr>
                     </thead>
                     <tbody>
                         {#each data as aircraft}
-                        <tr>
-                            <td>{aircraft.flight || '-'}</td>
+                        <tr class="hover:bg-base-300 cursor-pointer" on:click={() => showAircraftModal(aircraft)}>
                             <td>{aircraft.registration}</td>
+                            <td>{aircraft.flight || '-'}</td>
                             <td>{aircraft.operator}</td>
                             <td>{aircraft.type}</td>
                             <td>{aircraft.category}</td>
-                            <!-- TODO -->
-                            <td>{aircraft.tag1}</td>
-                            <td>{aircraft.seen}</td>
+                            <td>{aircraft.seen ? new Date(aircraft.seen).toLocaleString() : '-'}</td>
                         </tr>
                         {/each}
                     </tbody>
@@ -102,3 +112,46 @@
     </div>
 </div>
 
+<dialog id={aircraftType} class="modal" on:close={closeModal}>
+    <div class="modal-box max-w-4xl">
+        {#if selectedAircraft}
+            <div class="flex items-center justify-between mb-2">
+                <h3 class="text-lg font-bold">{selectedAircraft.registration} - {selectedAircraft.type}</h3>
+                <div class="flex gap-2">
+                    {#if selectedAircraft.tag1}
+                        <div class="badge badge-accent text-white">{selectedAircraft.tag1}</div>
+                    {/if}
+                    {#if selectedAircraft.tag2}
+                        <div class="badge badge-accent text-white">{selectedAircraft.tag2}</div>
+                    {/if}
+                    {#if selectedAircraft.tag3}
+                        <div class="badge badge-accent text-white">{selectedAircraft.tag3}</div>
+                    {/if}
+                </div>
+            </div>
+            <p class="text-sm text-gray-600 mb-4">{selectedAircraft.operator}</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {#if selectedAircraft.image_link_1}
+                    <img src={selectedAircraft.image_link_1} alt="{selectedAircraft.registration} photo 1" class="w-full h-auto rounded-lg" />
+                {/if}
+                {#if selectedAircraft.image_link_2}
+                    <img src={selectedAircraft.image_link_2} alt="{selectedAircraft.registration} photo 2" class="w-full h-auto rounded-lg" />
+                {/if}
+                {#if selectedAircraft.image_link_3}
+                    <img src={selectedAircraft.image_link_3} alt="{selectedAircraft.registration} photo 3" class="w-full h-auto rounded-lg" />
+                {/if}
+            </div>
+            {#if !selectedAircraft.image_link_1 && !selectedAircraft.image_link_2 && !selectedAircraft.image_link_3}
+                <p class="text-center text-gray-500 py-8">No photos available for this aircraft</p>
+            {/if}
+        {/if}
+        <div class="modal-action">
+            <form method="dialog">
+                <button class="btn">Close</button>
+            </form>
+        </div>
+    </div>
+    <form method="dialog" class="modal-backdrop">
+        <button>close</button>
+    </form>
+</dialog>

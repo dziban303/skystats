@@ -9,4 +9,5 @@
     icon={IconTank}
     iconColor="text-red-500"
     iconBgColor="bg-red-100"
+    aircraftType="mil"
 />

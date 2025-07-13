@@ -38,7 +38,7 @@
         }
     });
 </script>
-
+<div class="mt-5">
 {#if loading}
     <div class="flex justify-center py-8">
         <span class="loading loading-spinner loading-lg"></span>
@@ -54,14 +54,14 @@
         <span>No data available</span>
     </div>
 {:else}
-    <div class="stats stats-vertical lg:stats-horizontal shadow">
+    <div class="stats stats-vertical lg:stats-horizontal bg-base-100 shadow-sm rounded-xl hover:shadow-md transition-all duration-200">
         <div class="stat">
             <div class="stat-figure">
                 <div class="icon icon-tabler icons-tabler-outline">
                     <IconClock stroke={2}/>
                 </div>
             </div>
-            <div class="stat-title">Past Hour</div>
+            <div class="stat-title">Aircraft seen</div>
             <div class="stat-value">{data.hour_aircraft.toLocaleString()}</div>
             <div class="stat-desc">past hour</div>
         </div>
@@ -71,7 +71,7 @@
                     <IconCalendar stroke={2}/>
                 </div>
             </div>
-            <div class="stat-title">Today</div>
+            <div class="stat-title">Aircraft seen</div>
             <div class="stat-value">{data.today_aircraft.toLocaleString()}</div>
             <div class="stat-desc">today</div>
         </div>
@@ -81,19 +81,10 @@
                     <IconPlaneTilt stroke={2}/>
                 </div>
             </div>
-            <div class="stat-title">All Time</div>
+            <div class="stat-title">Aircraft seen</div>
             <div class="stat-value">{data.total_aircraft.toLocaleString()}</div>
             <div class="stat-desc">all time</div>
         </div>
-        <!-- <div class="stat">
-            <div class="stat-title">Unique Types</div>
-            <div class="stat-value">{data.unique_aircraft_types.toLocaleString()}</div>
-            <div class="stat-desc">↘︎ 90 (14%)</div>
-        </div>
-        <div class="stat">
-            <div class="stat-title">Interesting Aircraft</div>
-            <div class="stat-value">{data.interesting_aircraft_count.toLocaleString()}</div>
-            <div class="stat-desc">↘︎ 90 (14%)</div>
-        </div> -->
     </div>
 {/if}
+</div>

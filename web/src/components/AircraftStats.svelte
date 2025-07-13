@@ -43,8 +43,8 @@
         }
     });
 </script>
-
-<div class="card bg-base-100 w96 shadow-sm rounded-xl border border-gray-200 hover:shadow-md transition-all duration-200">
+<!-- <div class="card bg-base-100 w96 shadow-sm rounded-xl border border-secondary hover:shadow-md transition-all duration-200"> -->
+ <div class="card bg-base-100 w96 shadow-sm rounded-xl hover:shadow-md transition-all duration-200">
     <div class="card-body">
         <h2 class="card-title -mt-2 -mb-2 flex items-center gap-2">
             {#if icon}
@@ -81,7 +81,8 @@
                     </thead>
                     <tbody>
                         {#each data as aircraft}
-                        <tr class="hover:bg-base-300">
+                        <!-- <tr class="hover:bg-base-300"> -->
+                         <tr>
                             {#each columns as column}
                                 <td class={column.class || ''}>
                                     {#if column.formatter}

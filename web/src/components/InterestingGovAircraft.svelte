@@ -9,4 +9,5 @@
     icon={IconBuildings}
     iconColor="text-green-500"
     iconBgColor="bg-green-100"
+    aircraftType="gov"
 />

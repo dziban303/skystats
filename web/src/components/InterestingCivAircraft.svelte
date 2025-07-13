@@ -9,4 +9,5 @@
     icon={IconCurrencyDollar}
     iconColor="text-pink-500"
     iconBgColor="bg-pink-100"
+    aircraftType="civ"
 />
