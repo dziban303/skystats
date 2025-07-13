@@ -7,7 +7,10 @@
     endpoint='api/stats/interesting/civilian?limit=5'
     title="Civilian Aircraft"
     icon={IconCurrencyDollar}
-    iconColor="text-pink-500"
-    iconBgColor="bg-pink-100"
+    iconColor="text-secondary-content"
+    iconBgColor="bg-secondary"
     aircraftType="civ"
 />
+
+    <!-- iconColor="text-pink-500"
+    iconBgColor="bg-pink-100" -->

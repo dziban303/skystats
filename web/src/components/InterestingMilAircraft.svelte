@@ -7,7 +7,9 @@
     endpoint='api/stats/interesting/military?limit=5'
     title="Military Aircraft"
     icon={IconTank}
-    iconColor="text-red-500"
-    iconBgColor="bg-red-100"
+    iconColor="text-secondary-content"
+    iconBgColor="bg-secondary"
     aircraftType="mil"
 />
+
+<!-- iconColor="text-red-500" -->

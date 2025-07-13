@@ -43,18 +43,22 @@
         }
     });
 </script>
+
+<div class="grid grid-cols-1 gap-2">
+
+<div>
+<h1 class="card-title mb-3 flex items-center gap-2">
+    {#if icon}
+        <div class="w-8 h-8 {iconBgColor} rounded-lg flex items-center justify-center">
+            <svelte:component this={icon} class="w-5 h-5 {iconColor}" />
+        </div> 
+    {/if}
+    {title}
+</h1>
 <!-- <div class="card bg-base-100 w96 shadow-sm rounded-xl border border-secondary hover:shadow-md transition-all duration-200"> -->
- <div class="card bg-base-100 w96 shadow-sm rounded-xl hover:shadow-md transition-all duration-200">
+ <div class="card bg-base-100 w96 mb-4 shadow-sm rounded-xl hover:shadow-md transition-all duration-200">
     <div class="card-body">
-        <h2 class="card-title -mt-2 -mb-2 flex items-center gap-2">
-            {#if icon}
-                <div class="w-8 h-8 {iconBgColor} rounded-lg flex items-center justify-center">
-                    <svelte:component this={icon} class="w-5 h-5 {iconColor}" />
-                </div> 
-            {/if}
-            {title}
-        </h2>
-        <div class="divider mt-1 mb-1 -mx-6"></div>
+        <!-- <div class="divider mt-1 mb-1 -mx-6"></div> -->
         <div class="overflow-x-auto">
             {#if loading}
                 <div class="flex justify-center py-8">
@@ -100,4 +104,6 @@
         {/if}
         </div>
     </div>
+</div>
+</div>
 </div>
