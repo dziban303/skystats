@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"os"
 	"strconv"
@@ -57,6 +58,7 @@ func (s *APIServer) Start() {
 			stats.GET("/interesting/government", s.handleGovernmentAircraft)
 			stats.GET("/general", s.handleGeneralStats)
 			stats.GET("/routes", s.handleRouteStats)
+			stats.GET("/above", s.handleAboveStats)
 		}
 	}
 
@@ -107,6 +109,59 @@ func (s *APIServer) handleFastestAircraft(c *gin.Context) {
 			"ground_speed":        groundSpeed,
 			"indicated_air_speed": indicatedAirSpeed,
 			"true_air_speed":      trueAirSpeed,
+		})
+	}
+
+	c.JSON(http.StatusOK, aircraft)
+}
+
+func (s *APIServer) handleAboveStats(c *gin.Context) {
+
+	radiusValue := os.Getenv("ABOVE_RADIUS")
+	radius, err := strconv.Atoi(radiusValue)
+	if err != nil || radius <= 0 {
+		fmt.Println("Error parsing ABOVE_RADIUS environment variable ", err)
+		return
+	}
+
+	query := `
+		SELECT hex, flight, r, t, first_seen, 
+		last_seen, last_seen_lat, last_seen_lon, last_seen_distance
+		FROM aircraft_data
+		WHERE last_seen >= NOW() - INTERVAL '60 seconds'
+		AND last_seen_distance <= $1
+		ORDER BY last_seen_distance ASC
+		LIMIT 5`
+
+	rows, err := s.pg.db.Query(context.Background(), query, radius)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	defer rows.Close()
+
+	aircraft := []gin.H{}
+	for rows.Next() {
+		var hex, flight, registration, aircraftType string
+		var firstSeen, lastSeen interface{}
+		var lastSeenLat, lastSeenLon, lastSeenDistance float64
+
+		err := rows.Scan(&hex, &flight, &registration, &aircraftType, &firstSeen,
+			&lastSeen, &lastSeenLat, &lastSeenLon, &lastSeenDistance)
+		if err != nil {
+			continue
+		}
+
+		aircraft = append(aircraft, gin.H{
+			"hex":                hex,
+			"flight":             flight,
+			"r":                  registration,
+			"t":                  aircraftType,
+			"first_seen":         firstSeen,
+			"last_seen":          lastSeen,
+			"last_seen_lat":      lastSeenLat,
+			"last_seen_lon":      lastSeenLon,
+			"last_seen_distance": lastSeenDistance,
 		})
 	}
 
@@ -465,22 +520,6 @@ func (s *APIServer) handleGeneralStats(c *gin.Context) {
 	if err == nil {
 		stats["interesting_aircraft_count"] = interestingCount
 	}
-
-	// // Fastest recorded speed
-	// var fastestSpeed float64
-	// err = s.pg.db.QueryRow(context.Background(),
-	// 	"SELECT MAX(ground_speed) FROM fastest_aircraft").Scan(&fastestSpeed)
-	// if err == nil {
-	// 	stats["fastest_speed"] = fastestSpeed
-	// }
-
-	// // Highest altitude
-	// var highestAltitude int
-	// err = s.pg.db.QueryRow(context.Background(),
-	// 	"SELECT MAX(barometric_altitude) FROM highest_aircraft").Scan(&highestAltitude)
-	// if err == nil {
-	// 	stats["highest_altitude"] = highestAltitude
-	// }
 
 	c.JSON(http.StatusOK, stats)
 }

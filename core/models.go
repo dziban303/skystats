@@ -53,6 +53,9 @@ type Aircraft struct {
 	FirstSeenEpoch   float64
 	LastSeen         time.Time
 	LastSeenEpoch    float64
+	LastSeenLat      sql.NullFloat64
+	LastSeenLon      sql.NullFloat64
+	LastSeenDistance sql.NullFloat64
 	LowestProcessed  bool
 	HighestProcessed bool
 	FastestProcessed bool
