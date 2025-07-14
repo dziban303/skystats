@@ -1,6 +1,7 @@
 <script>
     import { onMount, onDestroy } from 'svelte';
     import { IconPlaneTilt, IconCalendar, IconClock, IconCategoryPlus } from '@tabler/icons-svelte';
+    import NumberFlow from '@number-flow/svelte'
 
 
     let data = {};
@@ -29,7 +30,7 @@
 
     onMount(() => {
         fetchData();
-        interval = setInterval(fetchData, 10000);
+        interval = setInterval(fetchData, 2000);
     })
 
     onDestroy(() => {
@@ -62,7 +63,7 @@
                 </div>
             </div>
             <div class="stat-title">Aircraft seen</div>
-            <div class="stat-value">{data.hour_aircraft.toLocaleString()}</div>
+            <div class="stat-value"><NumberFlow willChange={true} respectMotionPreference={false} value={data.hour_aircraft} /></div>
             <div class="stat-desc">past hour</div>
         </div>
         <div class="stat">
@@ -72,7 +73,7 @@
                 </div>
             </div>
             <div class="stat-title">Aircraft seen</div>
-            <div class="stat-value">{data.today_aircraft.toLocaleString()}</div>
+            <div class="stat-value"><NumberFlow willChange={true} respectMotionPreference={false} value={data.today_aircraft} /></div>
             <div class="stat-desc">today</div>
         </div>
         <div class="stat">
@@ -82,7 +83,7 @@
                 </div>
             </div>
             <div class="stat-title">Aircraft seen</div>
-            <div class="stat-value">{data.total_aircraft.toLocaleString()}</div>
+            <div class="stat-value"><NumberFlow willChange={true} respectMotionPreference={false} value={data.total_aircraft} /></div>
             <div class="stat-desc">all time</div>
         </div>
     </div>
