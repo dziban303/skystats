@@ -155,8 +155,8 @@ func (s *APIServer) handleAboveStats(c *gin.Context) {
 		aircraft = append(aircraft, gin.H{
 			"hex":                hex,
 			"flight":             flight,
-			"r":                  registration,
-			"t":                  aircraftType,
+			"registration":       registration,
+			"type":               aircraftType,
 			"first_seen":         firstSeen,
 			"last_seen":          lastSeen,
 			"last_seen_lat":      lastSeenLat,
