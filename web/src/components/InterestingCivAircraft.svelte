@@ -11,6 +11,5 @@
     iconBgColor="bg-secondary"
     aircraftType="civ"
 />
-
     <!-- iconColor="text-pink-500"
     iconBgColor="bg-pink-100" -->
