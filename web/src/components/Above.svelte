@@ -1,6 +1,11 @@
 <script>
     import { onMount, onDestroy } from 'svelte'
     import NumberFlow from '@number-flow/svelte'
+    import { fade } from 'svelte/transition'
+    import { flip } from 'svelte/animate'
+    import { IconBinoculars } from '@tabler/icons-svelte';
+
+
 
 
     let endpoint = 'api/stats/above'
@@ -12,6 +17,7 @@
     let interval = null;
 
     async function fetchData() {
+        console.log('refresh above')
         try {
             const response = await fetch(endpoint);
             if(!response.ok) {
@@ -39,6 +45,24 @@
     });
 </script>
 
+<style>
+    .table-container {
+        /* Calculate height for 5 rows + header */
+        /* This uses CSS calc with custom properties that work with DaisyUI */
+        min-height: calc(5 * 3rem + 3rem); /* 5 rows at ~3rem each + header ~3rem */
+        height: calc(5 * 3rem + 3rem);
+        display: flex;
+        flex-direction: column;
+    }
+</style>
+
+<div>
+<h1 class="card-title mb-3 flex items-center gap-2">
+    <div class="w-8 h-8 bg-secondary rounded-lg flex items-center justify-center">
+        <svelte:component this={IconBinoculars} class="w-5 h-5 text-secondary-content" />
+    </div> 
+    Above Me
+</h1>
 <div class="card bg-base-100 mb-4 w96 shadow-sm rounded-xl hover:shadow-md transition-all duration-200">
 <div class="card-body">
         <div class="overflow-x-auto">
@@ -57,6 +81,7 @@
                     <span>Nothing above you right now!</span>
                 </div> -->
             {:else}
+                <div class="table-container">
                 <table class="table">
                     <thead class="uppercase tracking-wider">
                         <tr>
@@ -68,8 +93,10 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {#each data as aircraft}
-                        <tr class="hover:bg-base-300">
+                        {#each data as aircraft (aircraft.registration)}
+                        <tr transition:fade={{ duration: 2000 }}
+                            animate:flip={{ duration: 2000 }}
+                            class="hover:bg-base-300">
                             <td>{aircraft.registration}</td>
                             <td>{aircraft.flight || '-'}</td>
                             <td>{aircraft.type || '-'}</td>
@@ -79,7 +106,9 @@
                         {/each}
                     </tbody>
                 </table>
+                </div>
             {/if}
         </div>
     </div>
+</div>
 </div>
