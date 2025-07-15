@@ -10,6 +10,7 @@
   import InterestingPolAircraft from './components/InterestingPolAircraft.svelte';
   import InterestingCivAircraft from './components/InterestingCivAircraft.svelte';
   import Status from './components/Status.svelte';
+  import Above from './components/Above.svelte';
 </script>
 
 <div class="container max-w-7xl mx-auto p-8">
@@ -22,6 +23,9 @@
   </div>
   <div class="grid grid-cols-1">
     <GeneralStats />
+  </div>
+  <div class="grid grid-cols-1 mt-10 gap-6">
+    <Above />
   </div>
   <div class="grid grid-cols-1 mt-10 gap-6">
     <InterestingMilAircraft />
