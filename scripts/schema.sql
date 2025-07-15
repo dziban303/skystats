@@ -487,6 +487,14 @@ ALTER TABLE ONLY public.slowest_aircraft ALTER COLUMN id SET DEFAULT nextval('pu
 
 
 --
+-- Name: aircraft_data aircraft_data_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.aircraft_data
+    ADD CONSTRAINT aircraft_data_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: fastest_aircraft fastest_aircraft_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
