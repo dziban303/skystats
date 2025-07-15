@@ -83,9 +83,11 @@ CREATE TABLE public.aircraft_data (
     db_flags integer,
     route_processed boolean DEFAULT false,
     registration_processed boolean DEFAULT false,
-    interesting_processed boolean DEFAULT false
+    interesting_processed boolean DEFAULT false,
+    last_seen_lat numeric(9,6),
+    last_seen_lon numeric(9,6),
+    last_seen_distance numeric(6,2)
 );
-
 
 
 --
@@ -99,7 +101,6 @@ CREATE SEQUENCE public.aircraft_data_id_seq
     NO MINVALUE
     NO MAXVALUE
     CACHE 1;
-
 
 
 --
@@ -129,7 +130,6 @@ CREATE TABLE public.registration_data (
 );
 
 
-
 --
 -- Name: aircraft_registration_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
@@ -141,7 +141,6 @@ CREATE SEQUENCE public.aircraft_registration_id_seq
     NO MINVALUE
     NO MAXVALUE
     CACHE 1;
-
 
 
 --
@@ -169,7 +168,6 @@ CREATE TABLE public.fastest_aircraft (
 );
 
 
-
 --
 -- Name: fastest_aircraft_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
@@ -181,7 +179,6 @@ CREATE SEQUENCE public.fastest_aircraft_id_seq
     NO MINVALUE
     NO MAXVALUE
     CACHE 1;
-
 
 
 --
@@ -227,7 +224,6 @@ CREATE TABLE public.route_data (
 );
 
 
-
 --
 -- Name: flight_route_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
@@ -239,7 +235,6 @@ CREATE SEQUENCE public.flight_route_id_seq
     NO MINVALUE
     NO MAXVALUE
     CACHE 1;
-
 
 
 --
@@ -266,7 +261,6 @@ CREATE TABLE public.highest_aircraft (
 );
 
 
-
 --
 -- Name: highest_aircraft_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
@@ -278,7 +272,6 @@ CREATE SEQUENCE public.highest_aircraft_id_seq
     NO MINVALUE
     NO MAXVALUE
     CACHE 1;
-
 
 
 --
@@ -309,7 +302,6 @@ CREATE TABLE public.interesting_aircraft (
     image_link_3 text,
     image_link_4 text
 );
-
 
 
 --
@@ -354,7 +346,6 @@ CREATE TABLE public.interesting_aircraft_seen (
 );
 
 
-
 --
 -- Name: lowest_aircraft; Type: TABLE; Schema: public; Owner: -
 --
@@ -372,7 +363,6 @@ CREATE TABLE public.lowest_aircraft (
 );
 
 
-
 --
 -- Name: lowest_aircraft_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
@@ -384,7 +374,6 @@ CREATE SEQUENCE public.lowest_aircraft_id_seq
     NO MINVALUE
     NO MAXVALUE
     CACHE 1;
-
 
 
 --
@@ -412,7 +401,6 @@ CREATE TABLE public.slowest_aircraft (
 );
 
 
-
 --
 -- Name: slowest_aircraft_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
@@ -426,12 +414,28 @@ CREATE SEQUENCE public.slowest_aircraft_id_seq
     CACHE 1;
 
 
-
 --
 -- Name: slowest_aircraft_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
 ALTER SEQUENCE public.slowest_aircraft_id_seq OWNED BY public.slowest_aircraft.id;
+
+
+--
+-- Name: test; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW public.test AS
+ SELECT id,
+    r,
+    hex,
+    flight,
+    first_seen,
+    last_seen,
+    alt_baro
+   FROM public.aircraft_data
+  ORDER BY last_seen DESC;
+
 
 --
 -- Name: aircraft_data id; Type: DEFAULT; Schema: public; Owner: -
@@ -560,6 +564,27 @@ ALTER TABLE ONLY public.slowest_aircraft
 
 ALTER TABLE ONLY public.slowest_aircraft
     ADD CONSTRAINT slowest_aircraft_unique_hex_first_seen UNIQUE (hex, first_seen);
+
+
+--
+-- Name: aircraft_data_hex; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX aircraft_data_hex ON public.aircraft_data USING btree (hex) WITH (deduplicate_items='true');
+
+
+--
+-- Name: idx_aircraft_data_hex; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_aircraft_data_hex ON public.aircraft_data USING btree (hex);
+
+
+--
+-- Name: idx_aircraft_data_hex_last_seen; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_aircraft_data_hex_last_seen ON public.aircraft_data USING btree (hex, last_seen DESC);
 
 
 --
