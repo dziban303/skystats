@@ -11,12 +11,14 @@
   import InterestingCivAircraft from './components/InterestingCivAircraft.svelte';
   import Status from './components/Status.svelte';
   import Above from './components/Above.svelte';
+  import AboveTimeline from './components/AboveTimeline.svelte';
 </script>
 
-<div class="container max-w-7xl mx-auto p-8">
-  <div class="flex justify-between items-center mb-8">
+
+<div class="container max-w-8xl mx-auto p-8">
+  <div class="flex justify-between items-center mt-8 mb-8">
     <div class="flex items-center gap-4">
-      <h1 class="text-4xl font-bold">SkyStats</h1>
+      <h1 class="text-3xl font-bold">SkyStats</h1>
       <Status />
     </div>
     <ThemeSelector />
@@ -25,7 +27,7 @@
     <GeneralStats />
   </div>
   <div class="grid grid-cols-1 mt-10 gap-6">
-    <Above />
+    <AboveTimeline />
   </div>
   <div class="grid grid-cols-2 mt-10 gap-6">
     <InterestingMilAircraft />
