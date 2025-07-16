@@ -5,9 +5,6 @@
     import { flip } from 'svelte/animate'
     import { IconBinoculars } from '@tabler/icons-svelte';
 
-
-
-
     let endpoint = 'api/stats/above'
 
     let refreshRate = 2000
