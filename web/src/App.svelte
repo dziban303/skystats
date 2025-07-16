@@ -27,7 +27,7 @@
   <div class="grid grid-cols-1 mt-10 gap-6">
     <Above />
   </div>
-  <div class="grid grid-cols-1 mt-10 gap-6">
+  <div class="grid grid-cols-2 mt-10 gap-6">
     <InterestingMilAircraft />
     <InterestingGovAircraft />
     <InterestingPolAircraft />
