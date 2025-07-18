@@ -86,9 +86,9 @@
     });
 </script>
 
-<div class="card bg-base-100 mb-4 w96 shadow-sm rounded-xl hover:shadow-md transition-all duration-200">
-<div class="card-body">
-        <div class="overflow-x-auto">
+<!-- <div class="card bg-base-100 mb-4 w96 shadow-sm rounded-xl hover:shadow-md transition-all duration-200"> -->
+<!-- <div class="card-body"> -->
+        <div class="w-full">
             {#if loading}
                 <div class="flex justify-center py-8">
                     <span class="loading loading-spinner loading-lg"></span>
@@ -99,11 +99,11 @@
                     <span>Something went wrong: {error}</span>
                 </div>
             {:else}
-                <ul class="timeline timeline-horizontal">
+                <ul class="timeline timeline-horizontal w-full">
                     <!--Home-->
                     <li>
                         <!-- <hr /> -->
-                        <div class="timeline-start mr-20"></div>
+                        <div class="timeline-start"></div>
                         <div class="timeline-middle">
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="currentColor"  class="icon icon-tabler icons-tabler-filled icon-tabler-home">
@@ -119,9 +119,9 @@
                         {#if aircraft}
                             <!-- <li transition:fade={{ duration: 100 }}> -->
                             <li>
-                                <hr />
-                                <div class="timeline-start mb-5 ml-5 mr-5">
-                                    <div class="badge badge-accent uppercase tracking-wider text-white">{aircraft.registration}</div>
+                                <hr/>
+                                <div class="timeline-start mb-5">
+                                    <div class="badge badge-accent uppercase font-bold tracking-wider text-white text-[8px] sm:text-xs">{aircraft.registration}</div>
                                 </div>
                                 <div class="timeline-middle">
                                     <svg
@@ -129,12 +129,12 @@
                                         width="24" height="24" viewBox="0 0 24 24" 
                                         fill="none" stroke="currentColor" 
                                         stroke-width="2" stroke-linecap="round" stroke-linejoin="round" 
-                                        class="icon icon-tabler icons-tabler-outline icon-tabler-plane-tilt">
+                                        class="icon icon-tabler icons-tabler-ou tline icon-tabler-plane-tilt">
                                         <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
                                         <path d="M14.5 6.5l3 -2.9a2.05 2.05 0 0 1 2.9 2.9l-2.9 3l2.5 7.5l-2.5 2.55l-3.5 -6.55l-3 3v3l-2 2l-1.5 -4.5l-4.5 -1.5l2 -2h3l3 -3l-6.5 -3.5l2.5 -2.5l7.5 2.5z" />
                                     </svg>
                                 </div>
-                                <div class="timeline-end">
+                                <div class="timeline-end text-xs sm:text-sm">
                                     <NumberFlow value={Number.parseFloat(aircraft.last_seen_distance).toFixed(0)} suffix=" km" willChange={true} respectMotionPreference={false}/>
                                 </div>
                                 <hr />
@@ -142,8 +142,8 @@
                         {:else}
                             <li>
                                 <hr />
-                                <div class="timeline-start mb-5 ml-5 mr-5">
-                                    <div class="invisible">PLACEHOLDER</div>
+                                <div class="timeline-start mb-5">
+                                    <div class="invisible text-xs sm:text-xs">PLACEHOLDER</div>
                                 </div>
                                 <div class="timeline-middle opacity-20">
                                     <svg
@@ -164,7 +164,7 @@
                     <!--Far-->
                     <li>
                         <hr />
-                        <div class="timeline-start ml-20"></div>
+                        <div class="timeline-start"></div>
                         <div class="timeline-middle">
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-world">
@@ -176,12 +176,26 @@
                                 <path d="M12.5 3a17 17 0 0 1 0 18" />
                             </svg>
                         </div>
-                        <div class="timeline-end">20km+</div>
+                        <div class="timeline-end text-xs sm:text-sm">20km+</div>
                         <!-- <hr /> -->
                     </li>
                     <!-- End Far-->
                 </ul>
             {/if}
         </div>
-    </div>
-</div>
+    <!-- </div>
+</div> -->
+
+<style>
+    .timeline-horizontal {
+        justify-content: space-between;
+    }
+    
+    .timeline-horizontal li {
+        flex: 1;
+    }
+    
+    .timeline-horizontal hr {
+        width: 100%;
+    }
+</style>
