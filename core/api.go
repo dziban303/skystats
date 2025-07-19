@@ -47,17 +47,22 @@ func (s *APIServer) Start() {
 	{
 		stats := api.Group("/stats")
 		{
-			stats.GET("/fastest", s.getFastestAircraft)
-			stats.GET("/slowest", s.getSlowestAircraft)
-			stats.GET("/highest", s.getHighestAircraft)
-			stats.GET("/lowest", s.getLowestAircraft)
+			stats.GET("/general", s.getGeneralStats)
+			// stats.GET("/routes", s.getRouteStats)
+			stats.GET("/above", s.getAboveStats)
+
+			stats.GET("/motion/fastest", s.getFastestAircraft)
+			stats.GET("/motion/slowest", s.getSlowestAircraft)
+			stats.GET("/motion/highest", s.getHighestAircraft)
+			stats.GET("/motion/lowest", s.getLowestAircraft)
+
 			stats.GET("/interesting/civilian", s.getCivilianAircraft)
 			stats.GET("/interesting/police", s.getPoliceAircraft)
 			stats.GET("/interesting/military", s.getMilitaryAircraft)
 			stats.GET("/interesting/government", s.getGovernmentAircraft)
-			stats.GET("/general", s.getGeneralStats)
-			stats.GET("/routes", s.getRouteStats)
-			stats.GET("/above", s.getAboveStats)
+
+			stats.GET("/routes/topairlines", s.getRouteTopAirlines)
+
 		}
 	}
 
@@ -165,15 +170,15 @@ func (s *APIServer) getAboveStats(c *gin.Context) {
 	c.JSON(http.StatusOK, aircraft)
 }
 
-func (s *APIServer) getRouteStats(c *gin.Context) {
-	stats, err := getRouteStatistics(s.pg)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
+// func (s *APIServer) getRouteStats(c *gin.Context) {
+// 	stats, err := getRouteStatistics(s.pg)
+// 	if err != nil {
+// 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+// 		return
+// 	}
 
-	c.JSON(http.StatusOK, stats)
-}
+// 	c.JSON(http.StatusOK, stats)
+// }
 
 func (s *APIServer) getGroupedInterestingAircraft(c *gin.Context, query string, limit int) {
 	rows, err := s.pg.db.Query(context.Background(), query, limit)
@@ -419,6 +424,56 @@ func (s *APIServer) getHighestAircraft(c *gin.Context) {
 	c.JSON(http.StatusOK, aircraft)
 }
 
+func (s *APIServer) getRouteTopAirlines(c *gin.Context) {
+	limit := s.getLimit(c)
+
+	query := `
+		SELECT 
+			rd.airline_name,
+			rd.airline_icao,
+			rd.airline_iata,
+			COUNT(*) as flight_count
+		FROM aircraft_data ad 
+		INNER JOIN route_data rd ON ad.flight = rd.route_callsign
+		WHERE rd.airline_name IS NOT NULL AND rd.airline_name != ''
+			AND rd.origin_iata_code != rd.destination_iata_code
+			AND rd.origin_iata_code IS NOT NULL AND rd.origin_iata_code != ''
+			AND rd.destination_iata_code IS NOT NULL AND rd.destination_iata_code != ''
+		GROUP BY rd.airline_name, rd.airline_icao, rd.airline_iata
+		ORDER BY flight_count DESC
+		LIMIT $1`
+
+	rows, err := s.pg.db.Query(context.Background(), query, limit)
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	defer rows.Close()
+
+	results := []gin.H{}
+
+	for rows.Next() {
+		var airline_name, airline_icao, airline_iata string
+		var flight_count int
+
+		err := rows.Scan(&airline_name, &airline_icao, &airline_iata, &flight_count)
+		if err != nil {
+			continue
+		}
+
+		results = append(results, gin.H{
+			"airline_name": airline_name,
+			"airline_icao": airline_icao,
+			"airline_iata": airline_iata,
+			"flight_count": flight_count,
+		})
+	}
+
+	c.JSON(http.StatusOK, results)
+
+}
+
 func (s *APIServer) getLowestAircraft(c *gin.Context) {
 	limit := s.getLimit(c)
 
@@ -464,7 +519,7 @@ func (s *APIServer) getLowestAircraft(c *gin.Context) {
 }
 
 func (s *APIServer) getLimit(c *gin.Context) int {
-	limitStr := c.DefaultQuery("limit", "10")
+	limitStr := c.DefaultQuery("limit", "5")
 
 	limit, err := strconv.Atoi(limitStr)
 	if err != nil || limit <= 0 {
