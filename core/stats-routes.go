@@ -7,14 +7,14 @@ import (
 )
 
 type RouteStats struct {
-	TotalRoutes            int                    `json:"total_routes"`
-	TopAirlines            []AirlineCount         `json:"top_airlines"`
-	TopRoutes              []RouteCount           `json:"top_routes"`
-	TopOriginAirports      []AirportCount         `json:"top_origin_airports"`
-	TopDestinationAirports []AirportCount         `json:"top_destination_airports"`
-	TopCountries           []CountryCount         `json:"top_countries"`
-	InternationalVsDomestic DomesticIntlCount     `json:"international_vs_domestic"`
-	AverageRouteDistance   float64               `json:"average_route_distance"`
+	TotalRoutes             int               `json:"total_routes"`
+	TopAirlines             []AirlineCount    `json:"top_airlines"`
+	TopRoutes               []RouteCount      `json:"top_routes"`
+	TopOriginAirports       []AirportCount    `json:"top_origin_airports"`
+	TopDestinationAirports  []AirportCount    `json:"top_destination_airports"`
+	TopCountries            []CountryCount    `json:"top_countries"`
+	InternationalVsDomestic DomesticIntlCount `json:"international_vs_domestic"`
+	AverageRouteDistance    float64           `json:"average_route_distance"`
 }
 
 type AirlineCount struct {
@@ -58,42 +58,42 @@ func getRouteStatistics(pg *postgres) (*RouteStats, error) {
 		return nil, fmt.Errorf("error getting total routes count: %v", err)
 	}
 	stats.TotalRoutes = totalRoutes
-	
+
 	// If no routes, return empty stats
 	if totalRoutes == 0 {
 		return stats, nil
 	}
 
 	// Get top airlines
-	topAirlines, err := getTopAirlines(pg, 10)
+	topAirlines, err := getTopAirlines(pg, 5)
 	if err != nil {
 		return nil, fmt.Errorf("error getting top airlines: %v", err)
 	}
 	stats.TopAirlines = topAirlines
 
 	// Get top routes
-	topRoutes, err := getTopRoutes(pg, 10)
+	topRoutes, err := getTopRoutes(pg, 5)
 	if err != nil {
 		return nil, fmt.Errorf("error getting top routes: %v", err)
 	}
 	stats.TopRoutes = topRoutes
 
 	// Get top origin airports
-	topOriginAirports, err := getTopOriginAirports(pg, 10)
+	topOriginAirports, err := getTopOriginAirports(pg, 5)
 	if err != nil {
 		return nil, fmt.Errorf("error getting top origin airports: %v", err)
 	}
 	stats.TopOriginAirports = topOriginAirports
 
 	// Get top destination airports
-	topDestinationAirports, err := getTopDestinationAirports(pg, 10)
+	topDestinationAirports, err := getTopDestinationAirports(pg, 5)
 	if err != nil {
 		return nil, fmt.Errorf("error getting top destination airports: %v", err)
 	}
 	stats.TopDestinationAirports = topDestinationAirports
 
 	// Get top countries
-	topCountries, err := getTopCountries(pg, 10)
+	topCountries, err := getTopCountries(pg, 5)
 	if err != nil {
 		return nil, fmt.Errorf("error getting top countries: %v", err)
 	}
@@ -124,13 +124,13 @@ func getTotalRoutesCount(pg *postgres) (int, error) {
 		WHERE rd.origin_iata_code != rd.destination_iata_code
 			AND rd.origin_iata_code IS NOT NULL AND rd.origin_iata_code != ''
 			AND rd.destination_iata_code IS NOT NULL AND rd.destination_iata_code != ''`
-	
+
 	var count int
 	err := pg.db.QueryRow(context.Background(), query).Scan(&count)
 	if err != nil {
 		return 0, err
 	}
-	
+
 	return count, nil
 }
 
