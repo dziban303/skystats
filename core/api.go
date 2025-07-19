@@ -47,17 +47,17 @@ func (s *APIServer) Start() {
 	{
 		stats := api.Group("/stats")
 		{
-			stats.GET("/fastest", s.handleFastestAircraft)
-			stats.GET("/slowest", s.handleSlowestAircraft)
-			stats.GET("/highest", s.handleHighestAircraft)
-			stats.GET("/lowest", s.handleLowestAircraft)
-			stats.GET("/interesting/civilian", s.handleCivilianAircraft)
-			stats.GET("/interesting/police", s.handlePoliceAircraft)
-			stats.GET("/interesting/military", s.handleMilitaryAircraft)
-			stats.GET("/interesting/government", s.handleGovernmentAircraft)
-			stats.GET("/general", s.handleGeneralStats)
-			stats.GET("/routes", s.handleRouteStats)
-			stats.GET("/above", s.handleAboveStats)
+			stats.GET("/fastest", s.getFastestAircraft)
+			stats.GET("/slowest", s.getSlowestAircraft)
+			stats.GET("/highest", s.getHighestAircraft)
+			stats.GET("/lowest", s.getLowestAircraft)
+			stats.GET("/interesting/civilian", s.getCivilianAircraft)
+			stats.GET("/interesting/police", s.getPoliceAircraft)
+			stats.GET("/interesting/military", s.getMilitaryAircraft)
+			stats.GET("/interesting/government", s.getGovernmentAircraft)
+			stats.GET("/general", s.getGeneralStats)
+			stats.GET("/routes", s.getRouteStats)
+			stats.GET("/above", s.getAboveStats)
 		}
 	}
 
@@ -68,7 +68,7 @@ func (s *APIServer) Start() {
 	r.Run("0.0.0.0:" + s.port)
 }
 
-func (s *APIServer) handleGeneralStats(c *gin.Context) {
+func (s *APIServer) getGeneralStats(c *gin.Context) {
 	stats := gin.H{}
 
 	// Total aircraft count
@@ -112,7 +112,7 @@ func (s *APIServer) handleGeneralStats(c *gin.Context) {
 	c.JSON(http.StatusOK, stats)
 }
 
-func (s *APIServer) handleAboveStats(c *gin.Context) {
+func (s *APIServer) getAboveStats(c *gin.Context) {
 
 	radiusValue := os.Getenv("ABOVE_RADIUS")
 	radius, err := strconv.Atoi(radiusValue)
@@ -165,7 +165,7 @@ func (s *APIServer) handleAboveStats(c *gin.Context) {
 	c.JSON(http.StatusOK, aircraft)
 }
 
-func (s *APIServer) handleRouteStats(c *gin.Context) {
+func (s *APIServer) getRouteStats(c *gin.Context) {
 	stats, err := getRouteStatistics(s.pg)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -175,7 +175,7 @@ func (s *APIServer) handleRouteStats(c *gin.Context) {
 	c.JSON(http.StatusOK, stats)
 }
 
-func (s *APIServer) handleGroupedInterestingAircraft(c *gin.Context, query string, limit int) {
+func (s *APIServer) getGroupedInterestingAircraft(c *gin.Context, query string, limit int) {
 	rows, err := s.pg.db.Query(context.Background(), query, limit)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -223,7 +223,7 @@ func (s *APIServer) handleGroupedInterestingAircraft(c *gin.Context, query strin
 	c.JSON(http.StatusOK, aircraft)
 }
 
-func (s *APIServer) handleCivilianAircraft(c *gin.Context) {
+func (s *APIServer) getCivilianAircraft(c *gin.Context) {
 	limit := s.getLimit(c)
 
 	query := `
@@ -235,10 +235,10 @@ func (s *APIServer) handleCivilianAircraft(c *gin.Context) {
 		ORDER BY seen DESC 
 		LIMIT $1`
 
-	s.handleGroupedInterestingAircraft(c, query, limit)
+	s.getGroupedInterestingAircraft(c, query, limit)
 }
 
-func (s *APIServer) handlePoliceAircraft(c *gin.Context) {
+func (s *APIServer) getPoliceAircraft(c *gin.Context) {
 	limit := s.getLimit(c)
 
 	query := `
@@ -250,10 +250,10 @@ func (s *APIServer) handlePoliceAircraft(c *gin.Context) {
 		ORDER BY seen DESC 
 		LIMIT $1`
 
-	s.handleGroupedInterestingAircraft(c, query, limit)
+	s.getGroupedInterestingAircraft(c, query, limit)
 }
 
-func (s *APIServer) handleMilitaryAircraft(c *gin.Context) {
+func (s *APIServer) getMilitaryAircraft(c *gin.Context) {
 	limit := s.getLimit(c)
 
 	query := `
@@ -265,10 +265,10 @@ func (s *APIServer) handleMilitaryAircraft(c *gin.Context) {
 		ORDER BY seen DESC 
 		LIMIT $1`
 
-	s.handleGroupedInterestingAircraft(c, query, limit)
+	s.getGroupedInterestingAircraft(c, query, limit)
 }
 
-func (s *APIServer) handleGovernmentAircraft(c *gin.Context) {
+func (s *APIServer) getGovernmentAircraft(c *gin.Context) {
 	limit := s.getLimit(c)
 
 	query := `
@@ -280,10 +280,10 @@ func (s *APIServer) handleGovernmentAircraft(c *gin.Context) {
 		ORDER BY seen DESC 
 		LIMIT $1`
 
-	s.handleGroupedInterestingAircraft(c, query, limit)
+	s.getGroupedInterestingAircraft(c, query, limit)
 }
 
-func (s *APIServer) handleFastestAircraft(c *gin.Context) {
+func (s *APIServer) getFastestAircraft(c *gin.Context) {
 	limit := s.getLimit(c)
 
 	query := `
@@ -329,7 +329,7 @@ func (s *APIServer) handleFastestAircraft(c *gin.Context) {
 	c.JSON(http.StatusOK, aircraft)
 }
 
-func (s *APIServer) handleSlowestAircraft(c *gin.Context) {
+func (s *APIServer) getSlowestAircraft(c *gin.Context) {
 	limit := s.getLimit(c)
 
 	query := `
@@ -375,7 +375,7 @@ func (s *APIServer) handleSlowestAircraft(c *gin.Context) {
 	c.JSON(http.StatusOK, aircraft)
 }
 
-func (s *APIServer) handleHighestAircraft(c *gin.Context) {
+func (s *APIServer) getHighestAircraft(c *gin.Context) {
 	limit := s.getLimit(c)
 
 	query := `
@@ -419,7 +419,7 @@ func (s *APIServer) handleHighestAircraft(c *gin.Context) {
 	c.JSON(http.StatusOK, aircraft)
 }
 
-func (s *APIServer) handleLowestAircraft(c *gin.Context) {
+func (s *APIServer) getLowestAircraft(c *gin.Context) {
 	limit := s.getLimit(c)
 
 	query := `
