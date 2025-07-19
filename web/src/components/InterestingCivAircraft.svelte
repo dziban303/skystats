@@ -4,12 +4,10 @@
 </script>
 
 <InterestingAircraft
-    endpoint='api/stats/interesting/civilian?limit=5'
+    endpoint='api/stats/interesting/civilian'
     title="Civilian Aircraft"
     icon={IconCurrencyDollar}
     iconColor="text-secondary-content"
     iconBgColor="bg-secondary"
     aircraftType="civ"
 />
-    <!-- iconColor="text-pink-500"
-    iconBgColor="bg-pink-100" -->
