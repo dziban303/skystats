@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@tabler/icons-svelte": "^3.34.0",
+    "flag-icons": "^7.5.0",
     "theme-change": "^2.5.0"
   }
 }

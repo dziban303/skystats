@@ -57,7 +57,7 @@
 
     {#each data as topCountry, index}
     <li class="list-row">
-        <div class="text-4xl font-thin opacity-30 tabular-nums">{String(index + 1).padStart(2, '0')}</div>
+        <div><span class="text-4xl fi fi-{topCountry.country_iso.toLowerCase()}"></span></div>
         <div class="list-col-grow">
         <div class="font-medium">{topCountry.country_name}</div>
         <div class="text-xs uppercase font-semibold opacity-60">{topCountry.country_iso}</div>
