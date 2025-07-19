@@ -13,9 +13,10 @@
   import Above from './components/Above.svelte';
   import AboveTimeline from './components/AboveTimeline.svelte';
   import RouteTopAirlines from './components/RouteTopAirlines.svelte';
-  import RouteTopCountries from './components/RouteTopCountries.svelte';
-  import RouteTopAirportsOrigin from './components/RouteTopAirportsOrigin.svelte';
-  import RouteTopAirportsDestination from './components/RouteTopAirportsDestination.svelte';
+  import RouteTopCountriesOrigin from './components/RouteTopCountriesOrigin.svelte';
+  import RouteTopCountriesDestination from './components/RouteTopCountriesDestination.svelte';
+  import RouteTopAirportsInternational from './components/RouteTopAirportsInternational.svelte';
+  import RouteTopAirportsDomestic from './components/RouteTopAirportsDomestic.svelte';
   import RouteTopRoutes from './components/RouteTopRoutes.svelte';
 </script>
 
@@ -34,13 +35,13 @@
   <div class="grid grid-cols-1 mt-10 gap-6">
     <AboveTimeline />
   </div>
-  <div class="grid grid-cols-5 mt-10 gap-6">
+  <div class="grid grid-cols-3 mt-10 gap-6">
     <RouteTopAirlines />
-    <RouteTopCountries />
+    <RouteTopAirportsDomestic  />
+    <RouteTopAirportsInternational />
     <RouteTopRoutes />
-    <RouteTopAirportsOrigin />
-    <RouteTopAirportsDestination />
-    
+    <RouteTopCountriesOrigin />
+    <RouteTopCountriesDestination />
   </div>
   <div class="grid grid-cols-1 md:grid-cols-2 mt-10 gap-6">
     <InterestingMilAircraft />

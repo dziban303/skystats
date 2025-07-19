@@ -2,7 +2,7 @@
     import { onMount, onDestroy } from 'svelte';
 
     let data = [];
-    let endpoint = '/api/stats/routes'
+    let endpoint = '/api/stats/routes/airports-international'
     let loading = true;
     let error = null;
     let interval = null;
@@ -15,7 +15,7 @@
                 throw new Error(`${response.status}`);
             }
             const result = await response.json();
-            data = result["top_origin_airports"];
+            data = result;
             error = null;
         } catch (err) {
             error = err.message;
@@ -52,20 +52,17 @@
     </div>
 {:else}
     <ul class="list bg-base-100 rounded-box shadow-md">
-    <li class="p-4 pb-2 text-xs opacity-60 tracking-wide">Top Airports - Origin</li>
-
+    <li class="p-4 pb-2 text-xs opacity-60 tracking-wide">Top International Airports</li>
 
     {#each data as airport, index}
     <li class="list-row">
         <div class="text-4xl font-thin opacity-30 tabular-nums">{String(index + 1).padStart(2, '0')}</div>
         <div class="list-col-grow">
-        <!-- <div class="font-medium">{airport.airport_code} - {airport.airport_name}</div> -->
-        <!-- <div class="text-xs uppercase font-semibold opacity-60">{airport.country}</div> -->
          <div class="font-medium">{airport.airport_code}</div>
-        <div class="text-xs uppercase font-semibold opacity-60">{airport.country}</div>
+        <div class="text-xs uppercase font-semibold opacity-60">{airport.airport_name}</div>
         </div>
         <div class="text-right">
-            <div class="font-semibold">{airport.count.toLocaleString()}</div>
+            <div class="font-semibold">{airport.flight_count.toLocaleString()}</div>
             <div class="text-xs opacity-60">flights</div>
         </div>
     </li>

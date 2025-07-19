@@ -2,7 +2,7 @@
     import { onMount, onDestroy } from 'svelte';
 
     let data = [];
-    let endpoint = '/api/stats/routes'
+    let endpoint = '/api/stats/routes/routes'
     let loading = true;
     let error = null;
     let interval = null;
@@ -15,7 +15,7 @@
                 throw new Error(`${response.status}`);
             }
             const result = await response.json();
-            data = result["top_routes"];
+            data = result;
             error = null;
         } catch (err) {
             error = err.message;
@@ -63,7 +63,7 @@
         <!-- <div class="text-xs uppercase font-semibold opacity-60">{airline.airline_icao} / {airline.airline_iata}</div> -->
         </div>
         <div class="text-right">
-            <div class="font-semibold">{route.count.toLocaleString()}</div>
+            <div class="font-semibold">{route.flight_count.toLocaleString()}</div>
             <div class="text-xs opacity-60">flights</div>
         </div>
     </li>

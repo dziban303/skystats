@@ -2,7 +2,7 @@
     import { onMount, onDestroy } from 'svelte';
 
     let data = [];
-    let endpoint = '/api/stats/routes/airlines'
+    let endpoint = '/api/stats/routes/countries-origin'
     let loading = true;
     let error = null;
     let interval = null;
@@ -52,18 +52,18 @@
     </div>
 {:else}
     <ul class="list bg-base-100 rounded-box shadow-md">
-    <li class="p-4 pb-2 text-xs opacity-60 tracking-wide">Top Airlines</li>
+    <li class="p-4 pb-2 text-xs opacity-60 tracking-wide">Top Origin Countries</li>
 
 
-    {#each data as airline, index}
+    {#each data as topCountry, index}
     <li class="list-row">
         <div class="text-4xl font-thin opacity-30 tabular-nums">{String(index + 1).padStart(2, '0')}</div>
         <div class="list-col-grow">
-        <div class="font-medium">{airline.airline_name}</div>
-        <div class="text-xs uppercase font-semibold opacity-60">{airline.airline_icao} / {airline.airline_iata}</div>
+        <div class="font-medium">{topCountry.country_name}</div>
+        <div class="text-xs uppercase font-semibold opacity-60">{topCountry.country_iso}</div>
         </div>
         <div class="text-right">
-            <div class="font-semibold">{airline.flight_count.toLocaleString()}</div>
+            <div class="font-semibold">{topCountry.flight_count.toLocaleString()}</div>
             <div class="text-xs opacity-60">flights</div>
         </div>
     </li>

@@ -48,8 +48,14 @@ func (s *APIServer) Start() {
 		stats := api.Group("/stats")
 		{
 			stats.GET("/general", s.getGeneralStats)
-			// stats.GET("/routes", s.getRouteStats)
 			stats.GET("/above", s.getAboveStats)
+
+			stats.GET("/routes/airlines", s.getTopAirlines)
+			stats.GET("/routes/routes", s.getTopRoutes)
+			stats.GET("/routes/countries-destination", s.getTopDestinationCountries)
+			stats.GET("/routes/countries-origin", s.getTopOriginCountries)
+			stats.GET("/routes/airports-domestic", s.getTopDomesticAirports)
+			stats.GET("/routes/airports-international", s.getTopInternationalAirports)
 
 			stats.GET("/motion/fastest", s.getFastestAircraft)
 			stats.GET("/motion/slowest", s.getSlowestAircraft)
@@ -60,8 +66,6 @@ func (s *APIServer) Start() {
 			stats.GET("/interesting/police", s.getPoliceAircraft)
 			stats.GET("/interesting/military", s.getMilitaryAircraft)
 			stats.GET("/interesting/government", s.getGovernmentAircraft)
-
-			stats.GET("/routes/topairlines", s.getRouteTopAirlines)
 
 		}
 	}
@@ -169,16 +173,6 @@ func (s *APIServer) getAboveStats(c *gin.Context) {
 
 	c.JSON(http.StatusOK, aircraft)
 }
-
-// func (s *APIServer) getRouteStats(c *gin.Context) {
-// 	stats, err := getRouteStatistics(s.pg)
-// 	if err != nil {
-// 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-// 		return
-// 	}
-
-// 	c.JSON(http.StatusOK, stats)
-// }
 
 func (s *APIServer) getGroupedInterestingAircraft(c *gin.Context, query string, limit int) {
 	rows, err := s.pg.db.Query(context.Background(), query, limit)
@@ -424,7 +418,192 @@ func (s *APIServer) getHighestAircraft(c *gin.Context) {
 	c.JSON(http.StatusOK, aircraft)
 }
 
-func (s *APIServer) getRouteTopAirlines(c *gin.Context) {
+func (s *APIServer) getLowestAircraft(c *gin.Context) {
+	limit := s.getLimit(c)
+
+	query := `
+		SELECT hex, flight, registration, type, first_seen, last_seen, 
+			   barometric_altitude, geometric_altitude
+		FROM lowest_aircraft 
+		ORDER BY barometric_altitude ASC 
+		LIMIT $1`
+
+	rows, err := s.pg.db.Query(context.Background(), query, limit)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	defer rows.Close()
+
+	aircraft := []gin.H{}
+	for rows.Next() {
+		var hex, flight, registration, aircraftType string
+		var firstSeen, lastSeen interface{}
+		var barometricAltitude, geometricAltitude int
+
+		err := rows.Scan(&hex, &flight, &registration, &aircraftType, &firstSeen,
+			&lastSeen, &barometricAltitude, &geometricAltitude)
+		if err != nil {
+			continue
+		}
+
+		aircraft = append(aircraft, gin.H{
+			"hex":                 hex,
+			"flight":              flight,
+			"registration":        registration,
+			"type":                aircraftType,
+			"first_seen":          firstSeen,
+			"last_seen":           lastSeen,
+			"barometric_altitude": barometricAltitude,
+			"geometric_altitude":  geometricAltitude,
+		})
+	}
+
+	c.JSON(http.StatusOK, aircraft)
+}
+
+func (s *APIServer) getTopRoutes(c *gin.Context) {
+	limit := s.getLimit(c)
+
+	query := `
+		SELECT 
+			CONCAT(rd.origin_iata_code, ' → ', rd.destination_iata_code) as route,
+			rd.origin_iata_code,
+			rd.destination_iata_code,
+			COUNT(*) as flight_count
+		FROM aircraft_data ad 
+		INNER JOIN route_data rd ON ad.flight = rd.route_callsign
+		WHERE rd.origin_iata_code IS NOT NULL AND rd.origin_iata_code != ''
+			AND rd.destination_iata_code IS NOT NULL AND rd.destination_iata_code != ''
+			AND rd.origin_iata_code != rd.destination_iata_code
+		GROUP BY rd.origin_iata_code, rd.destination_iata_code
+		ORDER BY flight_count DESC
+		LIMIT $1`
+
+	rows, err := s.pg.db.Query(context.Background(), query, limit)
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	defer rows.Close()
+
+	results := []gin.H{}
+
+	for rows.Next() {
+		var route, origin_iata_code, destination_iata_code string
+		var flight_count int
+
+		err := rows.Scan(&route, &origin_iata_code, &destination_iata_code, &flight_count)
+		if err != nil {
+			continue
+		}
+
+		results = append(results, gin.H{
+			"route":                 route,
+			"origin_iata_code":      origin_iata_code,
+			"destination_iata_code": destination_iata_code,
+			"flight_count":          flight_count,
+		})
+	}
+
+	c.JSON(http.StatusOK, results)
+
+}
+
+func (s *APIServer) getTopDestinationCountries(c *gin.Context) {
+	limit := s.getLimit(c)
+
+	query := `
+		SELECT 
+			rd.destination_country_name,
+			rd.destination_country_iso_name,
+			COUNT(*) as flight_count
+		FROM aircraft_data ad 
+		INNER JOIN route_data rd ON ad.flight = rd.route_callsign
+		WHERE rd.destination_country_iso_name IS NOT NULL AND rd.destination_country_iso_name != ''
+			AND rd.origin_country_iso_name != rd.destination_country_iso_name
+		GROUP BY rd.destination_country_name, destination_country_iso_name
+		ORDER BY flight_count DESC
+		LIMIT $1`
+
+	rows, err := s.pg.db.Query(context.Background(), query, limit)
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	defer rows.Close()
+
+	results := []gin.H{}
+
+	for rows.Next() {
+		var destination_country_name, destination_country_iso_name string
+		var flight_count int
+
+		err := rows.Scan(&destination_country_name, &destination_country_iso_name, &flight_count)
+		if err != nil {
+			continue
+		}
+
+		results = append(results, gin.H{
+			"country_name": destination_country_name,
+			"country_iso":  destination_country_iso_name,
+			"flight_count": flight_count,
+		})
+	}
+
+	c.JSON(http.StatusOK, results)
+
+}
+
+func (s *APIServer) getTopOriginCountries(c *gin.Context) {
+	limit := s.getLimit(c)
+
+	query := `
+		SELECT 
+			rd.origin_country_name,
+			rd.origin_country_iso_name,
+			COUNT(*) as flight_count
+		FROM aircraft_data ad 
+		INNER JOIN route_data rd ON ad.flight = rd.route_callsign
+		WHERE rd.origin_country_iso_name IS NOT NULL AND rd.origin_country_iso_name != ''
+			AND rd.destination_country_iso_name != rd.origin_country_iso_name
+		GROUP BY rd.origin_country_name, origin_country_iso_name
+		ORDER BY flight_count DESC
+		LIMIT $1`
+
+	rows, err := s.pg.db.Query(context.Background(), query, limit)
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	defer rows.Close()
+
+	results := []gin.H{}
+
+	for rows.Next() {
+		var origin_country_name, origin_country_iso_name string
+		var flight_count int
+
+		err := rows.Scan(&origin_country_name, &origin_country_iso_name, &flight_count)
+		if err != nil {
+			continue
+		}
+
+		results = append(results, gin.H{
+			"country_name": origin_country_name,
+			"country_iso":  origin_country_iso_name,
+			"flight_count": flight_count,
+		})
+	}
+
+	c.JSON(http.StatusOK, results)
+
+}
+
+func (s *APIServer) getTopAirlines(c *gin.Context) {
 	limit := s.getLimit(c)
 
 	query := `
@@ -474,48 +653,138 @@ func (s *APIServer) getRouteTopAirlines(c *gin.Context) {
 
 }
 
-func (s *APIServer) getLowestAircraft(c *gin.Context) {
+func (s *APIServer) getTopDomesticAirports(c *gin.Context) {
 	limit := s.getLimit(c)
 
 	query := `
-		SELECT hex, flight, registration, type, first_seen, last_seen, 
-			   barometric_altitude, geometric_altitude
-		FROM lowest_aircraft 
-		ORDER BY barometric_altitude ASC 
-		LIMIT $1`
+		SELECT
+			airport_code,
+			airport_name,
+			SUM(flight_count) as flight_count
+		FROM (
+			SELECT
+				rd.origin_iata_code as airport_code,
+				rd.origin_name as airport_name,
+				COUNT(*) as flight_count
+			FROM aircraft_data ad
+			INNER JOIN route_data rd ON ad.flight = rd.route_callsign
+			WHERE rd.origin_country_iso_name = $1
+				AND rd.origin_iata_code IS NOT NULL AND rd.origin_iata_code != ''
+				AND rd.destination_iata_code IS NOT NULL AND rd.destination_iata_code != ''
+				AND rd.origin_iata_code != rd.destination_iata_code
+			GROUP BY rd.origin_iata_code, rd.origin_name
+			UNION ALL
+			SELECT
+				rd.destination_iata_code as airport_code,
+				rd.destination_name as airport_name,
+				COUNT(*) as flight_count
+			FROM aircraft_data ad
+			INNER JOIN route_data rd ON ad.flight = rd.route_callsign
+			WHERE rd.destination_country_iso_name = $1
+				AND rd.origin_iata_code IS NOT NULL AND rd.origin_iata_code != ''
+				AND rd.destination_iata_code IS NOT NULL AND rd.destination_iata_code != ''
+				AND rd.origin_iata_code != rd.destination_iata_code
+			GROUP BY rd.destination_iata_code, rd.destination_name
+		) combined_airports
+		GROUP BY airport_code, airport_name
+		ORDER BY flight_count DESC
+		LIMIT $2`
 
-	rows, err := s.pg.db.Query(context.Background(), query, limit)
+	rows, err := s.pg.db.Query(context.Background(), query, s.getCountry(), limit)
+
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 	defer rows.Close()
 
-	aircraft := []gin.H{}
-	for rows.Next() {
-		var hex, flight, registration, aircraftType string
-		var firstSeen, lastSeen interface{}
-		var barometricAltitude, geometricAltitude int
+	results := []gin.H{}
 
-		err := rows.Scan(&hex, &flight, &registration, &aircraftType, &firstSeen,
-			&lastSeen, &barometricAltitude, &geometricAltitude)
+	for rows.Next() {
+		var airport_code, airport_name string
+		var flight_count int
+
+		err := rows.Scan(&airport_code, &airport_name, &flight_count)
 		if err != nil {
 			continue
 		}
 
-		aircraft = append(aircraft, gin.H{
-			"hex":                 hex,
-			"flight":              flight,
-			"registration":        registration,
-			"type":                aircraftType,
-			"first_seen":          firstSeen,
-			"last_seen":           lastSeen,
-			"barometric_altitude": barometricAltitude,
-			"geometric_altitude":  geometricAltitude,
+		results = append(results, gin.H{
+			"airport_code": airport_code,
+			"airport_name": airport_name,
+			"flight_count": flight_count,
 		})
 	}
 
-	c.JSON(http.StatusOK, aircraft)
+	c.JSON(http.StatusOK, results)
+
+}
+
+func (s *APIServer) getTopInternationalAirports(c *gin.Context) {
+	limit := s.getLimit(c)
+
+	query := `
+		SELECT
+			airport_code,
+			airport_name,
+			SUM(flight_count) as flight_count
+		FROM (
+			SELECT
+				rd.origin_iata_code as airport_code,
+				rd.origin_name as airport_name,
+				COUNT(*) as flight_count
+			FROM aircraft_data ad
+			INNER JOIN route_data rd ON ad.flight = rd.route_callsign
+			WHERE rd.origin_country_iso_name != $1
+				AND rd.origin_iata_code IS NOT NULL AND rd.origin_iata_code != ''
+				AND rd.destination_iata_code IS NOT NULL AND rd.destination_iata_code != ''
+				AND rd.origin_iata_code != rd.destination_iata_code
+			GROUP BY rd.origin_iata_code, rd.origin_name
+			UNION ALL
+			SELECT
+				rd.destination_iata_code as airport_code,
+				rd.destination_name as airport_name,
+				COUNT(*) as flight_count
+			FROM aircraft_data ad
+			INNER JOIN route_data rd ON ad.flight = rd.route_callsign
+			WHERE rd.destination_country_iso_name != $1
+				AND rd.origin_iata_code IS NOT NULL AND rd.origin_iata_code != ''
+				AND rd.destination_iata_code IS NOT NULL AND rd.destination_iata_code != ''
+				AND rd.origin_iata_code != rd.destination_iata_code
+			GROUP BY rd.destination_iata_code, rd.destination_name
+		) combined_airports
+		GROUP BY airport_code, airport_name
+		ORDER BY flight_count DESC
+		LIMIT $2`
+
+	rows, err := s.pg.db.Query(context.Background(), query, s.getCountry(), limit)
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	defer rows.Close()
+
+	results := []gin.H{}
+
+	for rows.Next() {
+		var airport_code, airport_name string
+		var flight_count int
+
+		err := rows.Scan(&airport_code, &airport_name, &flight_count)
+		if err != nil {
+			continue
+		}
+
+		results = append(results, gin.H{
+			"airport_code": airport_code,
+			"airport_name": airport_name,
+			"flight_count": flight_count,
+		})
+	}
+
+	c.JSON(http.StatusOK, results)
+
 }
 
 func (s *APIServer) getLimit(c *gin.Context) int {
@@ -531,4 +800,8 @@ func (s *APIServer) getLimit(c *gin.Context) int {
 	}
 
 	return limit
+}
+
+func (s *APIServer) getCountry() string {
+	return os.Getenv("DOMESTIC_COUNTRY_ISO")
 }
