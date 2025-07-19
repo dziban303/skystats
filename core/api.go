@@ -660,11 +660,13 @@ func (s *APIServer) getTopDomesticAirports(c *gin.Context) {
 		SELECT
 			airport_code,
 			airport_name,
+			airport_country,
 			SUM(flight_count) as flight_count
 		FROM (
 			SELECT
 				rd.origin_iata_code as airport_code,
 				rd.origin_name as airport_name,
+				rd.origin_country_name as airport_country,
 				COUNT(*) as flight_count
 			FROM aircraft_data ad
 			INNER JOIN route_data rd ON ad.flight = rd.route_callsign
@@ -672,11 +674,12 @@ func (s *APIServer) getTopDomesticAirports(c *gin.Context) {
 				AND rd.origin_iata_code IS NOT NULL AND rd.origin_iata_code != ''
 				AND rd.destination_iata_code IS NOT NULL AND rd.destination_iata_code != ''
 				AND rd.origin_iata_code != rd.destination_iata_code
-			GROUP BY rd.origin_iata_code, rd.origin_name
+			GROUP BY rd.origin_iata_code, rd.origin_name, rd.origin_country_name
 			UNION ALL
 			SELECT
 				rd.destination_iata_code as airport_code,
 				rd.destination_name as airport_name,
+				rd.destination_country_name as airport_country,
 				COUNT(*) as flight_count
 			FROM aircraft_data ad
 			INNER JOIN route_data rd ON ad.flight = rd.route_callsign
@@ -684,9 +687,9 @@ func (s *APIServer) getTopDomesticAirports(c *gin.Context) {
 				AND rd.origin_iata_code IS NOT NULL AND rd.origin_iata_code != ''
 				AND rd.destination_iata_code IS NOT NULL AND rd.destination_iata_code != ''
 				AND rd.origin_iata_code != rd.destination_iata_code
-			GROUP BY rd.destination_iata_code, rd.destination_name
+			GROUP BY rd.destination_iata_code, rd.destination_name, rd.destination_country_name
 		) combined_airports
-		GROUP BY airport_code, airport_name
+		GROUP BY airport_code, airport_name, airport_country
 		ORDER BY flight_count DESC
 		LIMIT $2`
 
@@ -701,18 +704,19 @@ func (s *APIServer) getTopDomesticAirports(c *gin.Context) {
 	results := []gin.H{}
 
 	for rows.Next() {
-		var airport_code, airport_name string
+		var airport_code, airport_name, airport_country string
 		var flight_count int
 
-		err := rows.Scan(&airport_code, &airport_name, &flight_count)
+		err := rows.Scan(&airport_code, &airport_name, &airport_country, &flight_count)
 		if err != nil {
 			continue
 		}
 
 		results = append(results, gin.H{
-			"airport_code": airport_code,
-			"airport_name": airport_name,
-			"flight_count": flight_count,
+			"airport_code":    airport_code,
+			"airport_name":    airport_name,
+			"airport_country": airport_country,
+			"flight_count":    flight_count,
 		})
 	}
 
@@ -723,15 +727,19 @@ func (s *APIServer) getTopDomesticAirports(c *gin.Context) {
 func (s *APIServer) getTopInternationalAirports(c *gin.Context) {
 	limit := s.getLimit(c)
 
+	fmt.Printf("GET COUNTRY: %s\n", s.getCountry())
+
 	query := `
 		SELECT
 			airport_code,
 			airport_name,
+			airport_country,
 			SUM(flight_count) as flight_count
 		FROM (
 			SELECT
 				rd.origin_iata_code as airport_code,
 				rd.origin_name as airport_name,
+				rd.origin_country_name as airport_country,
 				COUNT(*) as flight_count
 			FROM aircraft_data ad
 			INNER JOIN route_data rd ON ad.flight = rd.route_callsign
@@ -739,11 +747,12 @@ func (s *APIServer) getTopInternationalAirports(c *gin.Context) {
 				AND rd.origin_iata_code IS NOT NULL AND rd.origin_iata_code != ''
 				AND rd.destination_iata_code IS NOT NULL AND rd.destination_iata_code != ''
 				AND rd.origin_iata_code != rd.destination_iata_code
-			GROUP BY rd.origin_iata_code, rd.origin_name
+			GROUP BY rd.origin_iata_code, rd.origin_name, rd.origin_country_name
 			UNION ALL
 			SELECT
 				rd.destination_iata_code as airport_code,
 				rd.destination_name as airport_name,
+				rd.destination_country_name as airport_country,
 				COUNT(*) as flight_count
 			FROM aircraft_data ad
 			INNER JOIN route_data rd ON ad.flight = rd.route_callsign
@@ -751,9 +760,9 @@ func (s *APIServer) getTopInternationalAirports(c *gin.Context) {
 				AND rd.origin_iata_code IS NOT NULL AND rd.origin_iata_code != ''
 				AND rd.destination_iata_code IS NOT NULL AND rd.destination_iata_code != ''
 				AND rd.origin_iata_code != rd.destination_iata_code
-			GROUP BY rd.destination_iata_code, rd.destination_name
+			GROUP BY rd.destination_iata_code, rd.destination_name, rd.destination_country_name
 		) combined_airports
-		GROUP BY airport_code, airport_name
+		GROUP BY airport_code, airport_name, airport_country
 		ORDER BY flight_count DESC
 		LIMIT $2`
 
@@ -768,18 +777,19 @@ func (s *APIServer) getTopInternationalAirports(c *gin.Context) {
 	results := []gin.H{}
 
 	for rows.Next() {
-		var airport_code, airport_name string
+		var airport_code, airport_name, airport_country string
 		var flight_count int
 
-		err := rows.Scan(&airport_code, &airport_name, &flight_count)
+		err := rows.Scan(&airport_code, &airport_name, &airport_country, &flight_count)
 		if err != nil {
 			continue
 		}
 
 		results = append(results, gin.H{
-			"airport_code": airport_code,
-			"airport_name": airport_name,
-			"flight_count": flight_count,
+			"airport_code":    airport_code,
+			"airport_name":    airport_name,
+			"airport_country": airport_country,
+			"flight_count":    flight_count,
 		})
 	}
 
