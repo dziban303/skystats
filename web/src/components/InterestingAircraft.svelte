@@ -65,7 +65,7 @@
     {/if}
     {title}
 </h1>
-<div class="card bg-base-100 mb-4 w96 shadow-sm rounded-xl hover:shadow-md transition-all duration-200">
+<div class="card bg-base-100 mb-4 w96 shadow-sm rounded hover:shadow-md transition-all duration-200">
     <div class="card-body">
         <!-- <div class="divider mt-1 mb-1 -mx-6"></div> -->
         <div class="overflow-x-auto">
