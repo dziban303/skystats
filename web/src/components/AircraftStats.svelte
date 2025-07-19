@@ -9,7 +9,7 @@
     export let iconColor = '';
     export let iconBgColor = '';
 
-    let refreshRate = 10000
+    let refreshRate = 60000
     let data = [];
     let loading = true;
     let error = null;
