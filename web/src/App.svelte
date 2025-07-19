@@ -12,6 +12,11 @@
   import Status from './components/Status.svelte';
   import Above from './components/Above.svelte';
   import AboveTimeline from './components/AboveTimeline.svelte';
+  import RouteTopAirlines from './components/RouteTopAirlines.svelte';
+  import RouteTopCountries from './components/RouteTopCountries.svelte';
+  import RouteTopAirportsOrigin from './components/RouteTopAirportsOrigin.svelte';
+  import RouteTopAirportsDestination from './components/RouteTopAirportsDestination.svelte';
+  import RouteTopRoutes from './components/RouteTopRoutes.svelte';
 </script>
 
 
@@ -28,6 +33,14 @@
   </div>
   <div class="grid grid-cols-1 mt-10 gap-6">
     <AboveTimeline />
+  </div>
+  <div class="grid grid-cols-5 mt-10 gap-6">
+    <RouteTopAirlines />
+    <RouteTopCountries />
+    <RouteTopRoutes />
+    <RouteTopAirportsOrigin />
+    <RouteTopAirportsDestination />
+    
   </div>
   <div class="grid grid-cols-1 md:grid-cols-2 mt-10 gap-6">
     <InterestingMilAircraft />

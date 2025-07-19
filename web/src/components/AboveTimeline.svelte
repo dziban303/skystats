@@ -1,7 +1,6 @@
 <script>
     import { onMount, onDestroy } from 'svelte'
     import NumberFlow from '@number-flow/svelte'
-    import { fade } from 'svelte/transition'
 
     let endpoint = 'api/stats/above'
 
