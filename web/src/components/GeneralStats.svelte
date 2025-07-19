@@ -19,7 +19,6 @@
             }
             const result = await response.json();
             data = result;
-            console.log(data)
             error = null;
         } catch (err) {
             error = err.message;

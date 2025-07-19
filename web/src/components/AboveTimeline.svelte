@@ -57,7 +57,6 @@
     $: slottedData = getSlottedAircraft(data);
 
     async function fetchData() {
-        console.log('refresh above')
         try {
             const response = await fetch(endpoint);
             if(!response.ok) {
