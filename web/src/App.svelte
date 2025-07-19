@@ -1,9 +1,9 @@
 <script>
   import ThemeSelector from './components/ThemeSelector.svelte';
-  import HighestAircraft from './components/HighestAircraft.svelte';
-  import SlowestAircraft from './components/SlowestAircraft.svelte';
-  import LowestAircraft from './components/LowestAircraft.svelte';
-  import FastestAircraft from './components/FastestAircraft.svelte';
+  import MotionFastestAircraft from './components/MotionHighestAircraft.svelte';
+  import MotionSlowestAircraft from './components/MotionSlowestAircraft.svelte';
+  import MotionLowestAircraft from './components/MotionLowestAircraft.svelte';
+  import MotionHighestAircraft from './components/MotionHighestAircraft.svelte';
   import GeneralStats from './components/GeneralStats.svelte';
   import InterestingMilAircraft from './components/InterestingMilAircraft.svelte';
   import InterestingGovAircraft from './components/InterestingGovAircraft.svelte';
@@ -49,9 +49,9 @@
     <InterestingCivAircraft />
   </div>
   <div class="grid grid-cols-1 md:grid-cols-2 mt-10 gap-6">
-    <FastestAircraft />
-    <SlowestAircraft />
-    <HighestAircraft /> 
-    <LowestAircraft />
+    <MotionFastestAircraft />
+    <MotionSlowestAircraft />
+    <MotionHighestAircraft /> 
+    <MotionLowestAircraft />
   </div>
 </div>

@@ -1,6 +1,6 @@
 <script>
-    import AircraftStats from './AircraftStats.svelte';
-    import { IconRocket } from '@tabler/icons-svelte';
+    import MotionStats from './MotionStats.svelte';
+    import { IconWalk } from '@tabler/icons-svelte';
 
     const columns = [
         { header: 'Reg', field: 'registration', class: 'font-mono' },
@@ -19,12 +19,11 @@
     ];
 </script>
 
-<AircraftStats 
-    endpoint="/api/stats/fastest?limit=5"
-    title="Fastest Aircraft"
+<MotionStats 
+    endpoint="/api/stats/motion/slowest"
+    title="Slowest Aircraft"
     {columns}
-    icon={IconRocket}
-    iconColor="text-red-500"
-    iconBgColor="bg-red-100"
-
+    icon={IconWalk}
+    iconColor="text-yellow-600"
+    iconBgColor="bg-yellow-100"
 />

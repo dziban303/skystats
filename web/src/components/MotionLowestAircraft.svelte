@@ -1,6 +1,6 @@
 <script>
-    import AircraftStats from './AircraftStats.svelte';
-    import { IconArrowUpDashed } from '@tabler/icons-svelte';
+    import MotionStats from './MotionStats.svelte';
+    import { IconArrowDownDashed } from '@tabler/icons-svelte';
 
     const columns = [
         { header: 'Reg', field: 'registration', class: 'font-mono' },
@@ -19,11 +19,11 @@
     ];
 </script>
 
-<AircraftStats 
-    endpoint="/api/stats/highest?limit=5"
-    title="Highest Aircraft"
+<MotionStats 
+    endpoint="/api/stats/motion/lowest"
+    title="Lowest Aircraft"
     {columns}
-    icon={IconArrowUpDashed}
-    iconColor="text-green-500"
-    iconBgColor="bg-green-100"
+    icon={IconArrowDownDashed}
+    iconColor="text-blue-500"
+    iconBgColor="bg-blue-100"
 />
