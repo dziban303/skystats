@@ -9,50 +9,68 @@
     let loading = true;
     let error = null;
     let interval = null;
-    
 
-    function getSlottedAircraft(aircraftList) {
-        const slots = [null, null, null, null, null];
-        
-        const sortedAircraft = [...aircraftList].sort((a, b) => 
-            parseFloat(b.last_seen_distance) - parseFloat(a.last_seen_distance)
-        );
-        
-        sortedAircraft.forEach(aircraft => {
-            const distance = parseFloat(aircraft.last_seen_distance);
-            let preferredSlot;
-            
-            if (distance < 4) preferredSlot = 0;
-            else if (distance < 8) preferredSlot = 1;
-            else if (distance < 12) preferredSlot = 2;
-            else if (distance < 16) preferredSlot = 3;
-            else if (distance < 20) preferredSlot = 4;
-            else return;
-            
-            // Try to place in preferred slot
-            if (slots[preferredSlot] === null) {
-                slots[preferredSlot] = aircraft;
-            } else {
-                // If preferred slot is taken, find nearest empty slot
-                // First check slots after preferred slot
-                for (let i = preferredSlot + 1; i < 5; i++) {
-                    if (slots[i] === null) {
-                        slots[i] = aircraft;
-                        return;
-                    }
-                }
-                // Then check slots before preferred slot
-                for (let i = preferredSlot - 1; i >= 0; i--) {
-                    if (slots[i] === null) {
-                        slots[i] = aircraft;
-                        return;
-                    }
-                }
-            }
-        });
-        
-        return slots;
-    }
+  function getSlottedAircraft(aircraftList) {
+      const slots = [null, null, null, null, null];
+      
+      // Sort by distance ascending
+      const sortedAircraft = [...aircraftList]
+          .sort((a, b) => parseFloat(a.last_seen_distance) - parseFloat(b.last_seen_distance));
+      
+      sortedAircraft.forEach(aircraft => {
+          const distance = parseFloat(aircraft.last_seen_distance);
+          let idealSlot;
+          
+          if (distance < 4) idealSlot = 0;
+          else if (distance < 8) idealSlot = 1;
+          else if (distance < 12) idealSlot = 2;
+          else if (distance < 16) idealSlot = 3;
+          else if (distance < 20) idealSlot = 4;
+          else return;
+          
+          let placed = false;
+          
+          // try idea slot
+          if (slots[idealSlot] === null) {
+              slots[idealSlot] = aircraft;
+              placed = true;
+          } else {
+              // if no ideal, check later slots
+              for (let i = idealSlot + 1; i < 5 && !placed; i++) {
+                  if (slots[i] === null) {
+                      slots[i] = aircraft;
+                      placed = true;
+                  }
+              }
+              
+              // if no ideal or later, check earlier slots
+              for (let i = idealSlot - 1; i >= 0 && !placed; i--) {
+                  if (slots[i] === null) {
+                      slots[i] = aircraft;
+                      placed = true;
+                  }
+              }
+          }
+      });
+      
+      // final reorder to ensure always in logical order
+      for (let i = 0; i < 4; i++) {
+          for (let j = i + 1; j < 5; j++) {
+              if (slots[i] && slots[j]) {
+                  const dist1 = parseFloat(slots[i].last_seen_distance);
+                  const dist2 = parseFloat(slots[j].last_seen_distance);
+                  if (dist1 > dist2) {
+                      // swap
+                      const temp = slots[i];
+                      slots[i] = slots[j];
+                      slots[j] = temp;
+                  }
+              }
+          }
+      }
+      
+      return slots;
+  }
     
     $: slottedData = getSlottedAircraft(data);
 
