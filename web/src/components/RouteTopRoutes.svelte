@@ -1,5 +1,7 @@
 <script>
     import { onMount, onDestroy } from 'svelte';
+    import { IconChevronCompactRight } from '@tabler/icons-svelte';
+
 
     let data = [];
     let endpoint = '/api/stats/routes/routes'
@@ -53,14 +55,16 @@
 {:else}
     <ul class="list bg-base-100 rounded-box shadow-md">
     <li class="p-4 pb-2 text-xs opacity-60 tracking-wide">Top Routes</li>
-
-
     {#each data as route, index}
     <li class="list-row">
-        <div class="text-4xl font-thin opacity-30 tabular-nums">{String(index + 1).padStart(2, '0')}</div>
-        <div class="list-col-grow">
-        <div class="font-medium">{route.route}</div>
-        <!-- <div class="text-xs uppercase font-semibold opacity-60">{airline.airline_icao} / {airline.airline_iata}</div> -->
+        <div class="flex items-center justify-center">
+                <div class="text-4xl font-thin text-accent opacity-80 font-mono">{route.origin_iata_code}</div>
+                <IconChevronCompactRight class="text-accent" stroke={2} />
+                <div class="text-4xl font-thin text-accent opacity-80 font-mono">{route.destination_iata_code}</div>
+        </div>
+        <div class="list-col-grow flex flex-col justify-center">
+            <div class="text-xs font-medium">{route.origin_name}</div>
+            <div class="text-xs font-medium">{route.destination_name}</div>
         </div>
         <div class="text-right">
             <div class="font-semibold">{route.flight_count.toLocaleString()}</div>

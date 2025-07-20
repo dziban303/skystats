@@ -469,14 +469,16 @@ func (s *APIServer) getTopRoutes(c *gin.Context) {
 		SELECT 
 			CONCAT(rd.origin_iata_code, ' → ', rd.destination_iata_code) as route,
 			rd.origin_iata_code,
+			rd.origin_name,
 			rd.destination_iata_code,
+			rd.destination_name,
 			COUNT(*) as flight_count
 		FROM aircraft_data ad 
 		INNER JOIN route_data rd ON ad.flight = rd.route_callsign
 		WHERE rd.origin_iata_code IS NOT NULL AND rd.origin_iata_code != ''
 			AND rd.destination_iata_code IS NOT NULL AND rd.destination_iata_code != ''
 			AND rd.origin_iata_code != rd.destination_iata_code
-		GROUP BY rd.origin_iata_code, rd.destination_iata_code
+		GROUP BY rd.origin_iata_code, rd.origin_name, rd.destination_iata_code, rd.destination_name
 		ORDER BY flight_count DESC
 		LIMIT $1`
 
@@ -491,10 +493,10 @@ func (s *APIServer) getTopRoutes(c *gin.Context) {
 	results := []gin.H{}
 
 	for rows.Next() {
-		var route, origin_iata_code, destination_iata_code string
+		var route, origin_iata_code, origin_name, destination_iata_code, destination_name string
 		var flight_count int
 
-		err := rows.Scan(&route, &origin_iata_code, &destination_iata_code, &flight_count)
+		err := rows.Scan(&route, &origin_iata_code, &origin_name, &destination_iata_code, &destination_name, &flight_count)
 		if err != nil {
 			continue
 		}
@@ -502,7 +504,9 @@ func (s *APIServer) getTopRoutes(c *gin.Context) {
 		results = append(results, gin.H{
 			"route":                 route,
 			"origin_iata_code":      origin_iata_code,
+			"origin_name":           origin_name,
 			"destination_iata_code": destination_iata_code,
+			"destination_name":      destination_name,
 			"flight_count":          flight_count,
 		})
 	}
