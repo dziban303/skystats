@@ -27,13 +27,13 @@ func updateAircraftDatabase(pg *postgres) {
 
 	response.TrimFlightStrings()
 
-	loc := []float64{getLat(), getLon()}
+	loc := []float64{getLon(), getLat()}
 
 	var aircraftsInRange []Aircraft
 
 	for _, aircraft := range response.Aircraft {
 
-		planeLoc := []float64{aircraft.Lat, aircraft.Lon}
+		planeLoc := []float64{aircraft.Lon, aircraft.Lat}
 		distance := getRuler().Distance(loc, planeLoc)
 
 		if distance < getRadius() {
@@ -54,7 +54,7 @@ func getRuler() *cheapruler.CheapRuler {
 }
 
 func getDistance(aircraft []float64) *float64 {
-	loc := []float64{getLat(), getLon()}
+	loc := []float64{getLon(), getLat()}
 	distance := getRuler().Distance(loc, aircraft)
 	return &distance
 }
@@ -147,7 +147,7 @@ func insertNewAircrafts(pg *postgres, nowEpoch float64, existingAircrafts map[st
 	for _, aircraft := range aircrafts {
 		_, exists := existingAircrafts[aircraft.Hex]
 		if !exists {
-			lastSeenDistance := getDistance([]float64{aircraft.Lat, aircraft.Lon})
+			lastSeenDistance := getDistance([]float64{aircraft.Lon, aircraft.Lat})
 			aircraftsToInsert = append(aircraftsToInsert, aircraft)
 			insertStatement := `
 				INSERT INTO aircraft_data (
@@ -275,7 +275,7 @@ func updateExistingAircrafts(pg *postgres, nowEpoch float64, aircrafts []Aircraf
 		// Update last_seen_lat, last_seen_lon, last_seen_distance with the latest lat/lon
 		existingAircraft.LastSeenLat = sql.NullFloat64{Float64: aircraft.Lat, Valid: true}
 		existingAircraft.LastSeenLon = sql.NullFloat64{Float64: aircraft.Lon, Valid: true}
-		lastSeenDistance := getDistance([]float64{aircraft.Lat, aircraft.Lon})
+		lastSeenDistance := getDistance([]float64{aircraft.Lon, aircraft.Lat})
 		existingAircraft.LastSeenDistance = sql.NullFloat64{Float64: *lastSeenDistance, Valid: true}
 
 		// Update barometric altitude & geometric altitudes if higher than already stored
