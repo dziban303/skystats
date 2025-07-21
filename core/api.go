@@ -131,8 +131,8 @@ func (s *APIServer) getAboveStats(c *gin.Context) {
 	}
 
 	query := `
-		SELECT hex, flight, r, t, first_seen, 
-		last_seen, last_seen_lat, last_seen_lon, last_seen_distance
+		SELECT hex, flight, r, t, track, first_seen, last_seen, 
+		last_seen_lat, last_seen_lon, last_seen_distance
 		FROM aircraft_data
 		WHERE last_seen >= NOW() - INTERVAL '60 seconds'
 		AND last_seen_distance <= $1
@@ -150,11 +150,12 @@ func (s *APIServer) getAboveStats(c *gin.Context) {
 	for rows.Next() {
 		var hex, flight, registration, aircraftType string
 		var firstSeen, lastSeen interface{}
-		var lastSeenLat, lastSeenLon, lastSeenDistance float64
+		var track, lastSeenLat, lastSeenLon, lastSeenDistance float64
 
-		err := rows.Scan(&hex, &flight, &registration, &aircraftType, &firstSeen,
-			&lastSeen, &lastSeenLat, &lastSeenLon, &lastSeenDistance)
+		err := rows.Scan(&hex, &flight, &registration, &aircraftType, &track, 
+			&firstSeen, &lastSeen, &lastSeenLat, &lastSeenLon, &lastSeenDistance)
 		if err != nil {
+			fmt.Println("Error in getAboveStats() ", err)
 			continue
 		}
 
@@ -168,6 +169,7 @@ func (s *APIServer) getAboveStats(c *gin.Context) {
 			"last_seen_lat":      lastSeenLat,
 			"last_seen_lon":      lastSeenLon,
 			"last_seen_distance": lastSeenDistance,
+			"track":              track,
 		})
 	}
 

@@ -278,6 +278,9 @@ func updateExistingAircrafts(pg *postgres, nowEpoch float64, aircrafts []Aircraf
 		lastSeenDistance := getDistance([]float64{aircraft.Lon, aircraft.Lat})
 		existingAircraft.LastSeenDistance = sql.NullFloat64{Float64: *lastSeenDistance, Valid: true}
 
+		// Update track
+		existingAircraft.Track = aircraft.Track
+
 		// Update barometric altitude & geometric altitudes if higher than already stored
 		if existingAircraft.AltBaro < aircraft.AltBaro {
 			existingAircraft.AltBaro = aircraft.AltBaro
@@ -303,12 +306,13 @@ func updateExistingAircrafts(pg *postgres, nowEpoch float64, aircrafts []Aircraf
 								last_seen_lat = $3,
 								last_seen_lon = $4,
 								last_seen_distance = $5,
-								alt_baro = $6,
-								alt_geom = $7,
-								gs = $8,
-								ias = $9,
-								tas = $10
-							WHERE id = $11`
+								track = $6,
+								alt_baro = $7,
+								alt_geom = $8,
+								gs = $9,
+								ias = $10,
+								tas = $11
+							WHERE id = $12`
 
 		batch.Queue(
 			updateStatement,
@@ -317,6 +321,7 @@ func updateExistingAircrafts(pg *postgres, nowEpoch float64, aircrafts []Aircraf
 			existingAircraft.LastSeenLat,
 			existingAircraft.LastSeenLon,
 			existingAircraft.LastSeenDistance,
+			existingAircraft.Track,
 			existingAircraft.AltBaro,
 			existingAircraft.AltGeom,
 			existingAircraft.Gs,
