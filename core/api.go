@@ -152,7 +152,7 @@ func (s *APIServer) getFlightsSeenMetrics(c *gin.Context) {
 	// Today's flights count
 	var todayFlights int
 	err = s.pg.db.QueryRow(context.Background(),
-		"SELECT COUNT(*) FROM aircraft_data WHERE DATE(first_seen AT TIME ZONE $1) = CURRENT_DATE", tz).Scan(&todayFlights)
+		"SELECT COUNT(*) FROM aircraft_data WHERE first_seen >= DATE_TRUNC('day', NOW(), $1)", tz).Scan(&todayFlights)
 	if err == nil {
 		stats["today_flights"] = todayFlights
 	}
@@ -184,7 +184,7 @@ func (s *APIServer) getAircraftSeenMetrics(c *gin.Context) {
 	// Today's aircraft count
 	var todayAircraft int
 	err = s.pg.db.QueryRow(context.Background(),
-		"SELECT COUNT(DISTINCT hex) FROM aircraft_data WHERE DATE(first_seen AT TIME ZONE $1) = CURRENT_DATE", tz).Scan(&todayAircraft)
+		"SELECT COUNT(DISTINCT hex) FROM aircraft_data WHERE first_seen >= DATE_TRUNC('day', NOW(), $1)", tz).Scan(&todayAircraft)
 	if err == nil {
 		stats["today_aircraft"] = todayAircraft
 	}
@@ -262,7 +262,7 @@ func (s *APIServer) getInterestingMetrics(c *gin.Context) {
 	// Today's interesting aircraft count
 	var todayInterestingCount int
 	err = s.pg.db.QueryRow(context.Background(),
-		"SELECT COUNT(*) FROM interesting_aircraft_seen WHERE DATE(first_seen AT TIME ZONE $1) = CURRENT_DATE", tz).Scan(&todayInterestingCount)
+		"SELECT COUNT(*) FROM interesting_aircraft_seen WHERE first_seen >= DATE_TRUNC('day', NOW(), $1)", tz).Scan(&todayInterestingCount)
 	if err == nil {
 		stats["today_interesting"] = todayInterestingCount
 	}
