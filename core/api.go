@@ -257,22 +257,28 @@ func (s *APIServer) getInterestingMetrics(c *gin.Context) {
 	err := s.pg.db.QueryRow(context.Background(), "SELECT COUNT(*) FROM interesting_aircraft_seen").Scan(&interestingCount)
 	if err == nil {
 		stats["total_interesting"] = interestingCount
+	} else {
+		log.Error().Err(err).Msg("Error getting totalInterestingCount")
 	}
 
 	// Today's interesting aircraft count
 	var todayInterestingCount int
 	err = s.pg.db.QueryRow(context.Background(),
-		"SELECT COUNT(*) FROM interesting_aircraft_seen WHERE first_seen >= DATE_TRUNC('day', NOW(), $1)", tz).Scan(&todayInterestingCount)
+		"SELECT COUNT(*) FROM interesting_aircraft_seen WHERE seen >= DATE_TRUNC('day', NOW(), $1)", tz).Scan(&todayInterestingCount)
 	if err == nil {
 		stats["today_interesting"] = todayInterestingCount
+	} else {
+		log.Error().Err(err).Msg("Error getting todayInterestingCount")
 	}
 
 	// Past hour interesting aircraft count
 	var hourInterestingCount int
 	err = s.pg.db.QueryRow(context.Background(),
-		"SELECT COUNT(*) FROM interesting_aircraft_seen WHERE first_seen >= NOW() - INTERVAL '1 hour'").Scan(&hourInterestingCount)
+		"SELECT COUNT(*) FROM interesting_aircraft_seen WHERE seen >= NOW() - INTERVAL '1 hour'").Scan(&hourInterestingCount)
 	if err == nil {
 		stats["hour_interesting"] = hourInterestingCount
+	} else {
+		log.Error().Err(err).Msg("Error getting hourInterestingCount")
 	}
 
 	c.JSON(http.StatusOK, stats)
