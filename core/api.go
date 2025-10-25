@@ -679,11 +679,11 @@ func (s *APIServer) getTopAircraftTypes(c *gin.Context, period string, flightora
 
 	switch period {
 	case "year":
-		timeFilter = `age(now(), first_seen) <= INTERVAL '1 year' AND`
+		timeFilter = `first_seen >= now() - INTERVAL '1 year' AND`
 	case "month":
-		timeFilter = `age(now(), first_seen) <= INTERVAL '1 month' AND`
+		timeFilter = `first_seen >= now() - INTERVAL '1 month' AND`
 	case "day":
-		timeFilter = `age(now(), first_seen) <= INTERVAL '1 day' AND`
+		timeFilter = `first_seen >= now() - INTERVAL '1 day' AND`
 	default:
 		timeFilter = ""
 	}
