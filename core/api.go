@@ -701,7 +701,7 @@ func (s *APIServer) getTopAircraftTypes(c *gin.Context, period string, flightora
 					SELECT t, Count(t) as count
 					FROM ` + innerQuery + `
 					GROUP BY t ORDER BY count DESC
-				) top_15
+				) AS top_15
 				ORDER BY count DESC LIMIT 15`
 
 	rows, err := s.pg.db.Query(context.Background(), query)
