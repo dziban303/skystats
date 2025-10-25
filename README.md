@@ -123,6 +123,20 @@ And the following to `compose.yml` under the `skystats` service:
 
 **⚠️ The format of the csv must match the format of combined plane data + image file from plane-alert-db**
 
+### Reset DB password
+
+Get a psql console:
+
+```
+docker exec -it skystats-db psql --dbname=skystats_db --username=skystats-user
+```
+
+Set new password:
+
+```
+alter user "skystats-user" password 'NEW_PASS';
+```
+
 <br/>
 
 ## Screenshots
