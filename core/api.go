@@ -152,7 +152,7 @@ func (s *APIServer) getFlightsSeenMetrics(c *gin.Context) {
 	// Today's flights count
 	var todayFlights int
 	err = s.pg.db.QueryRow(context.Background(),
-		"SELECT COUNT(*) FROM aircraft_data WHERE DATE(first_seen AT TIME ZONE $1) = CURRENT_DATE", tz).Scan(&todayFlights)
+		"SELECT COUNT(*) FROM aircraft_data WHERE first_seen >= DATE_TRUNC('day', NOW(), $1)", tz).Scan(&todayFlights)
 	if err == nil {
 		stats["today_flights"] = todayFlights
 	}
@@ -184,7 +184,7 @@ func (s *APIServer) getAircraftSeenMetrics(c *gin.Context) {
 	// Today's aircraft count
 	var todayAircraft int
 	err = s.pg.db.QueryRow(context.Background(),
-		"SELECT COUNT(DISTINCT hex) FROM aircraft_data WHERE DATE(first_seen AT TIME ZONE $1) = CURRENT_DATE", tz).Scan(&todayAircraft)
+		"SELECT COUNT(DISTINCT hex) FROM aircraft_data WHERE first_seen >= DATE_TRUNC('day', NOW(), $1)", tz).Scan(&todayAircraft)
 	if err == nil {
 		stats["today_aircraft"] = todayAircraft
 	}
@@ -257,22 +257,28 @@ func (s *APIServer) getInterestingMetrics(c *gin.Context) {
 	err := s.pg.db.QueryRow(context.Background(), "SELECT COUNT(*) FROM interesting_aircraft_seen").Scan(&interestingCount)
 	if err == nil {
 		stats["total_interesting"] = interestingCount
+	} else {
+		log.Error().Err(err).Msg("Error getting totalInterestingCount")
 	}
 
 	// Today's interesting aircraft count
 	var todayInterestingCount int
 	err = s.pg.db.QueryRow(context.Background(),
-		"SELECT COUNT(*) FROM interesting_aircraft_seen WHERE DATE(first_seen AT TIME ZONE $1) = CURRENT_DATE", tz).Scan(&todayInterestingCount)
+		"SELECT COUNT(*) FROM interesting_aircraft_seen WHERE seen >= DATE_TRUNC('day', NOW(), $1)", tz).Scan(&todayInterestingCount)
 	if err == nil {
 		stats["today_interesting"] = todayInterestingCount
+	} else {
+		log.Error().Err(err).Msg("Error getting todayInterestingCount")
 	}
 
 	// Past hour interesting aircraft count
 	var hourInterestingCount int
 	err = s.pg.db.QueryRow(context.Background(),
-		"SELECT COUNT(*) FROM interesting_aircraft_seen WHERE first_seen >= NOW() - INTERVAL '1 hour'").Scan(&hourInterestingCount)
+		"SELECT COUNT(*) FROM interesting_aircraft_seen WHERE seen >= NOW() - INTERVAL '1 hour'").Scan(&hourInterestingCount)
 	if err == nil {
 		stats["hour_interesting"] = hourInterestingCount
+	} else {
+		log.Error().Err(err).Msg("Error getting hourInterestingCount")
 	}
 
 	c.JSON(http.StatusOK, stats)
@@ -673,11 +679,11 @@ func (s *APIServer) getTopAircraftTypes(c *gin.Context, period string, flightora
 
 	switch period {
 	case "year":
-		timeFilter = `age(now(), first_seen) <= INTERVAL '1 year' AND`
+		timeFilter = `first_seen >= now() - INTERVAL '1 year' AND`
 	case "month":
-		timeFilter = `age(now(), first_seen) <= INTERVAL '1 month' AND`
+		timeFilter = `first_seen >= now() - INTERVAL '1 month' AND`
 	case "day":
-		timeFilter = `age(now(), first_seen) <= INTERVAL '1 day' AND`
+		timeFilter = `first_seen >= now() - INTERVAL '1 day' AND`
 	default:
 		timeFilter = ""
 	}
@@ -701,7 +707,7 @@ func (s *APIServer) getTopAircraftTypes(c *gin.Context, period string, flightora
 					SELECT t, Count(t) as count
 					FROM ` + innerQuery + `
 					GROUP BY t ORDER BY count DESC
-				) top_15
+				) AS top_15
 				ORDER BY count DESC LIMIT 15`
 
 	rows, err := s.pg.db.Query(context.Background(), query)
