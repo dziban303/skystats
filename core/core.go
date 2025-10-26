@@ -112,7 +112,11 @@ func main() {
 	if banner, err := os.ReadFile("../docs/logo/skystats_ascii.txt"); err == nil {
 		log.Info().Msg("\n" + string(banner))
 	}
-	log.Info().Msg("Welcome to Skystats!")
+	if version == "dev" {
+		log.Info().Msgf("Welcome to Skystats! (build: %s • %s)", version, commit)
+	} else {
+		log.Info().Msgf("Welcome to Skystats %s!", version)
+	}
 
 	defer func() {
 		log.Info().Msg("Closing database connection")
