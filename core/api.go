@@ -14,9 +14,10 @@ import (
 )
 
 type APIServer struct {
-	pg       *postgres
-	port     string
-	settings *SettingsService
+	pg          *postgres
+	port        string
+	settings    *SettingsService
+	cachedStats *CachedStatsService
 }
 
 func NewAPIServer(pg *postgres) *APIServer {
@@ -25,9 +26,10 @@ func NewAPIServer(pg *postgres) *APIServer {
 		port = "8080"
 	}
 	return &APIServer{
-		pg:       pg,
-		port:     port,
-		settings: NewSettingsService(pg),
+		pg:          pg,
+		port:        port,
+		settings:    NewSettingsService(pg),
+		cachedStats: NewCachedStatsService(pg),
 	}
 }
 
@@ -79,8 +81,8 @@ func (s *APIServer) Start() {
 		{
 			stats.GET("/above", s.getAboveStats)
 
-			stats.GET("/seen/flights", s.getFlightsSeenMetrics)
-			stats.GET("/seen/aircraft", s.getAircraftSeenMetrics)
+			stats.GET("/seen/recent", s.getRecentSeenMetrics)
+			stats.GET("/seen/totals", s.getTotalSeenMetrics)
 
 			stats.GET("/routes/metrics", s.getRouteMetrics)
 			stats.GET("/routes/airlines", s.getTopAirlines)
@@ -119,6 +121,9 @@ func (s *APIServer) Start() {
 			stats.GET("/charts/aircraft/month", func(c *gin.Context) { s.getChartAircraftOverTime(c, "month") })
 			stats.GET("/charts/aircraft/day", func(c *gin.Context) { s.getChartAircraftOverTime(c, "day") })
 
+			// Depracacted
+			stats.GET("/seen/flights", s.getFlightsSeenMetrics)
+			stats.GET("/seen/aircraft", s.getAircraftSeenMetrics)
 		}
 
 		settings := api.Group("/settings")
@@ -1466,4 +1471,46 @@ func (s *APIServer) updateSettings(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, settings)
+}
+
+func (s *APIServer) getRecentSeenMetrics(c *gin.Context) {
+	stats := gin.H{}
+	tz := s.getTimezone(c)
+
+	query := `
+		SELECT
+			COUNT(*) FILTER (WHERE DATE(first_seen AT TIME ZONE $1) = CURRENT_DATE) as today_flights,
+			COUNT(*) FILTER (WHERE first_seen >= NOW() - INTERVAL '1 hour') as hour_flights,
+			COUNT(DISTINCT CASE WHEN DATE(first_seen AT TIME ZONE $1) = CURRENT_DATE THEN hex END) as today_aircraft,
+			COUNT(DISTINCT CASE WHEN first_seen >= NOW() - INTERVAL '1 hour' THEN hex END) as hour_aircraft
+		FROM aircraft_data
+		WHERE first_seen >= CURRENT_DATE AT TIME ZONE $1 - INTERVAL '1 day'
+	`
+
+	var todayFlights, hourFlights, todayAircraft, hourAircraft int
+	err := s.pg.db.QueryRow(context.Background(), query, tz).Scan(&todayFlights, &hourFlights, &todayAircraft, &hourAircraft)
+	if err == nil {
+		stats["today_flights"] = todayFlights
+		stats["hour_flights"] = hourFlights
+		stats["today_aircraft"] = todayAircraft
+		stats["hour_aircraft"] = hourAircraft
+	}
+
+	c.JSON(http.StatusOK, stats)
+}
+
+func (s *APIServer) getTotalSeenMetrics(c *gin.Context) {
+	stats := gin.H{}
+
+	totalFlights, err := s.cachedStats.GetCachedStat("total_flights")
+	if err == nil {
+		stats["total_flights"] = totalFlights
+	}
+
+	totalAircraft, err := s.cachedStats.GetCachedStat("total_aircraft")
+	if err == nil {
+		stats["total_aircraft"] = totalAircraft
+	}
+
+	c.JSON(http.StatusOK, stats)
 }

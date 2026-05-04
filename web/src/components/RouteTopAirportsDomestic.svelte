@@ -1,5 +1,5 @@
 <script>
-    import { onMount, onDestroy } from 'svelte';
+    import { onMount } from 'svelte';
     import SkeletonRouteTable from './SkeletonRouteTable.svelte';
     import { refreshRouteData } from '../stores/settings';
 
@@ -7,7 +7,6 @@
     let endpoint = 'api/stats/routes/airports-domestic'
     let loading = true;
     let error = null;
-    let interval = null;
 
     async function fetchData() {
 
@@ -28,14 +27,7 @@
 
     onMount(() => {
         fetchData();
-        interval = setInterval(fetchData, 60000);
     })
-
-    onDestroy(() => {
-        if (interval) {
-            clearInterval(interval);
-        }
-    });
 
     // Refresh when settings change
     $: if ($refreshRouteData) {
