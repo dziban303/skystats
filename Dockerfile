@@ -13,7 +13,7 @@ RUN DATE="${DATE:-$(date -u +'%Y-%m-%dT%H:%M:%SZ')}" && \
     go build -ldflags "-s -w -X main.version=${VERSION:-dev} -X main.commit=${COMMIT:-none} -X main.date=${DATE}" -o skystats ./core
 
 
-FROM node:20-alpine AS node
+FROM --platform=$BUILDPLATFORM node:20-alpine AS node
 
 COPY ./web /app
 
