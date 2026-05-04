@@ -15,14 +15,7 @@ func NewCachedStatsService(pg *postgres) *CachedStatsService {
 	return &CachedStatsService{pg: pg}
 }
 
-func (s *CachedStatsService) GetCachedStat(key string) (int, error) {
-	var value int
-	err := s.pg.db.QueryRow(context.Background(),
-		"SELECT stat_value FROM cached_stats WHERE stat_key = $1", key).Scan(&value)
-	return value, err
-}
-
-func (s *CachedStatsService) UpdateCachedStat(key string, value int) error {
+func (s *CachedStatsService) updateCachedStat(key string, value int) error {
 	_, err := s.pg.db.Exec(context.Background(),
 		`INSERT INTO cached_stats (stat_key, stat_value, last_updated)
 		VALUES ($1, $2, NOW())
@@ -32,59 +25,41 @@ func (s *CachedStatsService) UpdateCachedStat(key string, value int) error {
 	return err
 }
 
-func (s *CachedStatsService) RefreshAllTotals() error {
-	log.Info().Msg("Refreshing cached all-time statistics...")
-
-	// Update total flights
-	var totalFlights int
+func (s *CachedStatsService) GetCachedTotalAircraft() (int, error) {
+	var value int
+	var lastUpdated time.Time
 	err := s.pg.db.QueryRow(context.Background(),
-		"SELECT COUNT(*) FROM aircraft_data").Scan(&totalFlights)
-	if err != nil {
-		log.Error().Err(err).Msg("Failed to count total flights")
-		return err
-	}
-	err = s.UpdateCachedStat("total_flights", totalFlights)
-	if err != nil {
-		log.Error().Err(err).Msg("Failed to update cached total_flights")
-		return err
+		`SELECT stat_value, last_updated FROM cached_stats
+		WHERE stat_key = 'total_aircraft'`).Scan(&value, &lastUpdated)
+
+	if err == nil && time.Since(lastUpdated) < 24*time.Hour {
+		log.Debug().
+			Int("total_aircraft", value).
+			Dur("cache_age", time.Since(lastUpdated)).
+			Msg("Returning cached total_aircraft")
+		return value, nil
 	}
 
-	// Update total aircraft
+	log.Info().Msg("Cache stale or missing, recalculating total_aircraft...")
+
 	var totalAircraft int
 	err = s.pg.db.QueryRow(context.Background(),
 		"SELECT COUNT(DISTINCT hex) FROM aircraft_data").Scan(&totalAircraft)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to count total aircraft")
-		return err
+		return 0, err
 	}
-	err = s.UpdateCachedStat("total_aircraft", totalAircraft)
+
+	// Update cache
+	err = s.updateCachedStat("total_aircraft", totalAircraft)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to update cached total_aircraft")
-		return err
+		return totalAircraft, nil
 	}
 
 	log.Info().
-		Int("total_flights", totalFlights).
 		Int("total_aircraft", totalAircraft).
-		Msg("Successfully refreshed cached statistics")
+		Msg("Successfully recalculated and cached total_aircraft")
 
-	return nil
-}
-
-func (s *CachedStatsService) StartPeriodicRefresh(interval time.Duration) {
-	go func() {
-		// Initial refresh on startup
-		if err := s.RefreshAllTotals(); err != nil {
-			log.Error().Err(err).Msg("Initial cache refresh failed")
-		}
-
-		ticker := time.NewTicker(interval)
-		defer ticker.Stop()
-
-		for range ticker.C {
-			if err := s.RefreshAllTotals(); err != nil {
-				log.Error().Err(err).Msg("Periodic cache refresh failed")
-			}
-		}
-	}()
+	return totalAircraft, nil
 }

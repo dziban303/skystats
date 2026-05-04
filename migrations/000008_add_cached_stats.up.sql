@@ -8,5 +8,4 @@ CREATE TABLE cached_stats (
 -- Insert initial values for all-time totals
 INSERT INTO cached_stats (stat_key, stat_value, last_updated)
 VALUES
-    ('total_flights', (SELECT COUNT(*) FROM aircraft_data), NOW()),
     ('total_aircraft', (SELECT COUNT(DISTINCT hex) FROM aircraft_data), NOW());
