@@ -1502,12 +1502,14 @@ func (s *APIServer) getRecentSeenMetrics(c *gin.Context) {
 func (s *APIServer) getTotalSeenMetrics(c *gin.Context) {
 	stats := gin.H{}
 
-	totalFlights, err := s.cachedStats.GetCachedStat("total_flights")
+	var totalFlights int
+	err := s.pg.db.QueryRow(context.Background(),
+		"SELECT COUNT(*) FROM aircraft_data").Scan(&totalFlights)
 	if err == nil {
 		stats["total_flights"] = totalFlights
 	}
 
-	totalAircraft, err := s.cachedStats.GetCachedStat("total_aircraft")
+	totalAircraft, err := s.cachedStats.GetCachedTotalAircraft()
 	if err == nil {
 		stats["total_aircraft"] = totalAircraft
 	}

@@ -9,6 +9,7 @@
     let loading = true;
     let error = null;
     let recentInterval = null;
+    let totalInterval = null;
 
     async function fetchRecentData() {
         try {
@@ -45,11 +46,15 @@
         fetchRecentData();
         fetchTotalData();
         recentInterval = setInterval(fetchRecentData, 2000);
+        totalInterval = setInterval(fetchTotalData, 60000);
     })
 
     onDestroy(() => {
         if (recentInterval) {
             clearInterval(recentInterval);
+        }
+        if (totalInterval) {
+            clearInterval(totalInterval);
         }
     });
 </script>

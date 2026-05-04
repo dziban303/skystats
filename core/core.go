@@ -93,13 +93,10 @@ func main() {
 		os.Exit(1)
 	}
 
-	apiServer := NewAPIServer(pg)
-
-	log.Info().Msg("Starting cached statistics refresh service")
-	apiServer.cachedStats.StartPeriodicRefresh(24 * time.Hour)
-
 	// Start API server in a separate goroutine
 	log.Info().Msg("Starting API server")
+	apiServer := NewAPIServer(pg)
+
 	go func() {
 		apiServer.Start()
 	}()
