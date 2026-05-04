@@ -1,6 +1,6 @@
 <script>
 // @ts-nocheck
-    import { onMount, onDestroy } from 'svelte';
+    import { onMount } from 'svelte';
     import { refreshRecordHolderData } from '../stores/settings';
 
     export let endpoint;
@@ -8,11 +8,9 @@
     export let columns = [];
     export let icon = null;
 
-    let refreshRate = 60000
     let data = [];
     let loading = true;
     let error = null;
-    let interval = null;
 
     async function fetchData() {
 
@@ -33,15 +31,8 @@
 
     onMount(() => {
         fetchData();
-        interval = setInterval(fetchData, refreshRate);
     })
 
-    onDestroy(() => {
-        if (interval) {
-            clearInterval(interval);
-        }
-    });
-    
     // Refresh when settings change
     $: if ($refreshRecordHolderData) {
         fetchData();

@@ -1,5 +1,5 @@
 <script>
-    import { onMount, onDestroy } from 'svelte'
+    import { onMount } from 'svelte'
     import { settings, refreshInterestingData } from '../stores/settings';
 
     export let endpoint;
@@ -7,11 +7,9 @@
     export let icon;
     export let aircraftType;
 
-    let refreshRate = 10000
     let data = [];
     let loading = true;
     let error = null;
-    let interval = null;
     let selectedAircraft = null;
     let imageLoadingStates = {
         image1: true,
@@ -53,14 +51,7 @@
 
     onMount(() => {
         fetchData();
-        interval = setInterval(fetchData, refreshRate)
     })
-
-    onDestroy(() => {
-        if (interval) {
-            clearInterval(interval)
-        }
-    });
 
     // Refresh when settings change
     $: if ($refreshInterestingData) {
