@@ -93,10 +93,14 @@ func main() {
 		os.Exit(1)
 	}
 
+	apiServer := NewAPIServer(pg)
+
+	log.Info().Msg("Starting cached statistics refresh service")
+	apiServer.cachedStats.StartPeriodicRefresh(24 * time.Hour)
+
 	// Start API server in a separate goroutine
 	log.Info().Msg("Starting API server")
 	go func() {
-		apiServer := NewAPIServer(pg)
 		apiServer.Start()
 	}()
 
@@ -112,7 +116,11 @@ func main() {
 	if banner, err := os.ReadFile("../docs/logo/skystats_ascii.txt"); err == nil {
 		log.Info().Msg("\n" + string(banner))
 	}
-	log.Info().Msg("Welcome to Skystats!")
+	if version == "dev" {
+		log.Info().Msgf("Welcome to Skystats! (build: %s • %s)", version, commit)
+	} else {
+		log.Info().Msgf("Welcome to Skystats %s!", version)
+	}
 
 	defer func() {
 		log.Info().Msg("Closing database connection")

@@ -4,15 +4,13 @@
     import NumberFlow from '@number-flow/svelte'
     import SkeletonMetrics from './SkeletonMetrics.svelte';
 
-
     let data = {};
-    let endpoint = 'api/stats/seen/aircraft'
+    let endpoint = 'api/stats/seen/recent'
     let loading = true;
     let error = null;
-    let interval = null;
+    let recentInterval = null;
 
-    async function fetchData() {
-
+    async function fetchRecentData() {
         try {
             const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
             const response = await fetch(`${endpoint}?tz=${encodeURIComponent(tz)}`);
@@ -20,7 +18,7 @@
                 throw new Error(`${response.status}`);
             }
             const result = await response.json();
-            data = result;
+            data = { ...data, ...result };
             error = null;
         } catch (err) {
             error = err.message;
@@ -29,14 +27,29 @@
         }
     }
 
+    async function fetchTotalData() {
+        try {
+            const response = await fetch(`api/stats/seen/totals`);
+            if (!response.ok) {
+                throw new Error(`${response.status}`);
+            }
+            const result = await response.json();
+            data = { ...data, ...result };
+            error = null;
+        } catch (err) {
+            error = err.message;
+        }
+    }
+
     onMount(() => {
-        fetchData();
-        interval = setInterval(fetchData, 2000);
+        fetchRecentData();
+        fetchTotalData();
+        recentInterval = setInterval(fetchRecentData, 2000);
     })
 
     onDestroy(() => {
-        if (interval) {
-            clearInterval(interval);
+        if (recentInterval) {
+            clearInterval(recentInterval);
         }
     });
 </script>

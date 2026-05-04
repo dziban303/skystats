@@ -1,0 +1,1 @@
+DROP INDEX IF EXISTS idx_aircraft_data_last_seen_distance;
