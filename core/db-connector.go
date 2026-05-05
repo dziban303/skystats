@@ -4,13 +4,20 @@ import (
 	"context"
 	"os"
 	"sync"
+	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/rs/zerolog/log"
 )
 
+type aircraftCacheEntry struct {
+	aircraft  Aircraft
+	expiresAt time.Time
+}
+
 type postgres struct {
-	db *pgxpool.Pool
+	db                 *pgxpool.Pool
+	recentAircraftCache map[string]*aircraftCacheEntry
 }
 
 var (
@@ -25,7 +32,10 @@ func NewPG(ctx context.Context, connString string) (*postgres, error) {
 			log.Error().Err(err).Msg("Unable to connect to database")
 		}
 
-		pgInstance = &postgres{db}
+		pgInstance = &postgres{
+			db:                  db,
+			recentAircraftCache: make(map[string]*aircraftCacheEntry),
+		}
 	})
 
 	return pgInstance, nil
