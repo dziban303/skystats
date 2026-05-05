@@ -92,10 +92,23 @@ func (pg *postgres) updateDatabase(nowEpoch float64, aircrafts []Aircraft) {
 func getAircraftsRecentlySeen(pg *postgres, nowEpoch float64, aircrafts []Aircraft) map[string]*Aircraft {
 
 	existingAircrafts := make(map[string]*Aircraft)
+	now := time.Now()
+	newExpiry := now.Add(10 * time.Minute)
 
-	var hexValues []string
+	var uncachedHexes []string
+
 	for _, a := range aircrafts {
-		hexValues = append(hexValues, a.Hex)
+		entry, ok := pg.recentAircraftCache[a.Hex]
+		if ok && now.Before(entry.expiresAt) {
+			entry.expiresAt = newExpiry
+			existingAircrafts[a.Hex] = &entry.aircraft
+		} else {
+			uncachedHexes = append(uncachedHexes, a.Hex)
+		}
+	}
+
+	if len(uncachedHexes) == 0 {
+		return existingAircrafts
 	}
 
 	recentThreshold := int(nowEpoch) - 600
@@ -114,12 +127,12 @@ func getAircraftsRecentlySeen(pg *postgres, nowEpoch float64, aircrafts []Aircra
 			ias,
 			tas
 		FROM aircraft_data
-		WHERE hex = ANY($1::text[]) 
+		WHERE hex = ANY($1::text[])
 			AND last_seen_epoch > $2
 		ORDER BY hex, last_seen DESC;
 	`
 
-	rows, err := pg.db.Query(context.Background(), query, hexValues, recentThreshold)
+	rows, err := pg.db.Query(context.Background(), query, uncachedHexes, recentThreshold)
 	if err != nil {
 		fmt.Println("getAircraftsRecentlySeen() - Error querying db: ", err)
 		return nil
@@ -127,26 +140,30 @@ func getAircraftsRecentlySeen(pg *postgres, nowEpoch float64, aircrafts []Aircra
 	defer rows.Close()
 
 	for rows.Next() {
-		var existingAircraft Aircraft
+		var a Aircraft
 		err := rows.Scan(
-			&existingAircraft.Id,
-			&existingAircraft.Hex,
-			&existingAircraft.LastSeenEpoch,
-			&existingAircraft.LastSeenLat,
-			&existingAircraft.LastSeenLon,
-			&existingAircraft.LastSeenDistance,
-			&existingAircraft.AltBaro,
-			&existingAircraft.AltGeom,
-			&existingAircraft.Gs,
-			&existingAircraft.Ias,
-			&existingAircraft.Tas)
+			&a.Id,
+			&a.Hex,
+			&a.LastSeenEpoch,
+			&a.LastSeenLat,
+			&a.LastSeenLon,
+			&a.LastSeenDistance,
+			&a.AltBaro,
+			&a.AltGeom,
+			&a.Gs,
+			&a.Ias,
+			&a.Tas)
 
 		if err != nil {
 			log.Error().Err(err).Msg("getAircraftsRecentlySeen() - error scanning rows")
 			continue
 		}
 
-		existingAircrafts[existingAircraft.Hex] = &existingAircraft
+		pg.recentAircraftCache[a.Hex] = &aircraftCacheEntry{
+			aircraft:  a,
+			expiresAt: newExpiry,
+		}
+		existingAircrafts[a.Hex] = &pg.recentAircraftCache[a.Hex].aircraft
 	}
 
 	return existingAircrafts
